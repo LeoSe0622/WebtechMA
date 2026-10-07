@@ -37,6 +37,8 @@ app:
     retention-days: 7
   seed:
     enabled: true
+  open-food-facts:
+    base-url: https://world.openfoodfacts.org
 
 server:
   # Render gibt den Port über PORT vor

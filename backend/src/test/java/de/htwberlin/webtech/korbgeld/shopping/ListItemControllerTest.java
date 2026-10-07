@@ -6,15 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.List;
 
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +45,18 @@ class ListItemControllerTest {
                 .andExpect(jsonPath("$[0].productName").value("Hafermilch"))
                 .andExpect(jsonPath("$[0].productId").value(10))
                 .andExpect(jsonPath("$[1].checked").value(true));
+    }
+
+    @Test
+    void createWithInvalidQuantityIsBadRequestWithFieldError() throws Exception {
+        mockMvc.perform(post("/api/list-items").with(jwt().jwt(token -> token.subject("42")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"productId\":1,\"quantity\":0}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].field").value("quantity"))
+                .andExpect(jsonPath("$.errors[0].message").value("muss zwischen 1 und 99 liegen"));
+
+        verifyNoInteractions(listItemService);   // ungültige Anfragen erreichen den Service gar nicht
     }
 
     @Test
