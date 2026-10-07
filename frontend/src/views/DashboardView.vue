@@ -59,15 +59,18 @@ const lastMonthName = computed(() => {
         <article class="box card">
           <h2>Ausgegeben diesen Monat</h2>
           <p class="big amount">{{ formatEuro(summary.spent) }}</p>
-          <p class="muted">{{ summary.locked ? 'Budget für diesen Monat festgelegt' : 'Noch kein Einkauf erfasst' }}</p>
+          <p class="muted">{{ summary.spent > 0 ? 'Bisherige Einkäufe in diesem Monat' : 'Noch kein Einkauf erfasst' }}</p>
         </article>
 
         <article class="box card">
           <h2>Sparquote {{ lastMonthName }}</h2>
           <template v-if="summary.lastCompleted && lastRate">
             <p class="big amount">{{ lastRate }}</p>
-            <p class="muted">
-              {{ formatEuro(summary.lastCompleted.amount - summary.lastCompleted.spent) }} übrig von
+            <p v-if="summary.lastCompleted.remaining >= 0" class="muted">
+              {{ formatEuro(summary.lastCompleted.remaining) }} übrig von {{ formatEuro(summary.lastCompleted.amount) }}
+            </p>
+            <p v-else class="over">
+              {{ formatEuro(-summary.lastCompleted.remaining) }} über dem Budget von
               {{ formatEuro(summary.lastCompleted.amount) }}
             </p>
           </template>
@@ -134,6 +137,10 @@ h2 {
 
 .muted {
   color: var(--muted);
+}
+
+.over {
+  color: var(--danger);
 }
 
 .error {

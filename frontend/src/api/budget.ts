@@ -4,6 +4,7 @@ export interface MonthResult {
   yearMonth: string
   amount: number
   spent: number
+  remaining: number
   savingsRate: number
 }
 

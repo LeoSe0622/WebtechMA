@@ -125,6 +125,8 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 
 ## E15: Budget nur für den laufenden und den nächsten Monat (Phase 3)
 
+- **Status:** Ergänzt nach Review 02 (M2): Die Sperre betrifft nur das **Ändern** eines vorhandenen Budgets. Ein erstes Budget kann man auch nach einem Einkauf noch anlegen. `locked` ist nur `true`, wenn ein Budget existiert und im Monat eingekauft wurde.
+
 - **Datum:** 07.10.2026
 - **Entscheidung:** `PUT /api/budgets/{yearMonth}` akzeptiert nur den laufenden und den nächsten Monat, sonst 400. Ein Einkauf ohne Budget ist erlaubt, `remainingBudget` ist dann `null`.
 - **Grund:** Vergangene Monate sind abgeschlossen und zählen für Sparquote und Rangliste. Sie nachträglich zu ändern, würde die Wertung verfälschen. Die Untergrenze 1 € verhindert eine Division durch 0 bei der Sparquote (Review 00, m5).
@@ -136,3 +138,24 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Entscheidung:** Optionale Wahrheitswerte in Requests sind `Boolean` (nicht `boolean`), fehlend gilt als `false`.
 - **Grund:** Spring Boot 4 nutzt Jackson 3. Dort schlägt das Einlesen fehl, wenn ein primitives Feld im JSON fehlt (`FAIL_ON_NULL_FOR_PRIMITIVES`), und die Anfrage endet mit 400. Aufgefallen durch den Integrationstest der Kern-Kette.
 - **Verworfene Alternative:** Die Jackson-Einstellung global abschalten. Das würde echte Fehler bei Pflichtfeldern verstecken.
+
+## E17: Sichtbarkeit von Produkten (Review 02, B1 und M3)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Neue Spalte `product.created_by` (V5). Selbst eingetippte Produkte gehören ihrem Ersteller und sind nur für ihn sichtbar (Suche, Verwendung per productId). Katalog- und Open-Food-Facts-Produkte bleiben gemeinsam (`created_by IS NULL`). Weil Produktnamen nicht eindeutig sind, sucht der Code nie mehr mit „genau ein Treffer“, sondern immer mit `findFirst … OrderByIdAsc`. Der Seed-Katalog wird über Quelle `MANUAL`, `created_by IS NULL` und Namen gefunden. Wird ein Sandbox-Nutzer gelöscht, löscht `ON DELETE CASCADE` seine eigenen Produkte mit.
+- **Grund:** Ein Scan mit einem Katalognamen (z. B. „Butter“) erzeugte zwei gleichnamige Produkte, danach scheiterte der Demo-Login für alle mit 500. Freitext eines Nutzers erschien außerdem in den Vorschlägen aller anderen. Regressionstests: `CatalogAndSeparationIntegrationTest`.
+- **Verworfene Alternativen:** Eindeutiger Produktname per UNIQUE-Constraint. Dann könnte Open Food Facts kein Produkt speichern, das zufällig wie ein Katalogprodukt heißt. Produkte ganz pro Nutzer speichern: Dann ginge der gemeinsame Cache für Barcodes verloren.
+
+## E18: Vorrat beim Einkauf nur mit Einträgen ohne Datum zusammenfassen (Review 02, m5)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Ein gekauftes Produkt erhöht nur einen Vorratseintrag **ohne** Mindesthaltbarkeitsdatum. Gibt es nur Einträge mit Datum, entsteht ein neuer Eintrag ohne Datum.
+- **Grund:** Sonst landet frisch Gekauftes in einem womöglich abgelaufenen Eintrag und würde als „abgelaufen“ gewarnt. AUFTRAG.md, Abschnitt 7 („gleiches Produkt wird zusammengefasst“) bleibt für undatierte Einträge erfüllt.
+- **Verworfene Alternative:** Beim Aufstocken das Datum löschen. Dann ginge die Warnung für die alte Ware verloren.
+
+## E19: Übrige Befunde aus Review 02
+
+- **Datum:** 07.10.2026
+- **Behoben:** B1, M1–M4 (siehe E15, E17 und Tests), m1 (`parseEuro` für „1.000“ und „1.000,50“), m3 (Busy-Zustände), m4 („Alles verbraucht“ statt „Verbraucht“), m5 (E18), m6 (Ersatz-Handler für unerwartete Fehler mit 500 als ProblemDetail, zu lange Bild-URLs werden verworfen), m7 (ungültiges Barcode-Format → 400, kein externer Aufruf innerhalb einer Transaktion), m8 (`StoreService`), m9 (Scanner-Text und Kamera beim schnellen Schließen), m10 (Restbudget des Vormonats vom Backend, „über dem Budget“), m13 (Geldvergleich mit BigDecimal, Alibi-Test entfernt), m14 (Sparquoten der Persona als BigDecimal), m15 (Prompt-Tabelle, `docs/IDEEN.md`).
+- **In Phase 4 erledigt:** m11 (Navigation auf schmalen Bildschirmen).
+- **Zurückgestellt mit Grund:** m2 (Obergrenze im Frontend nur als Hinweistext, maßgeblich ist das Backend mit 409). m12 und m16 kommen als bekannte Risiken in STATUS.md und als Ideen in IDEEN.md. 401 ohne Body bleibt: Das Frontend reagiert nur auf den Status.

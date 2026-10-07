@@ -29,6 +29,7 @@ public final class BudgetDtos {
                                         boolean locked, MonthResult lastCompleted) {
     }
 
-    public record MonthResult(YearMonth yearMonth, BigDecimal amount, BigDecimal spent, BigDecimal savingsRate) {
+    public record MonthResult(YearMonth yearMonth, BigDecimal amount, BigDecimal spent, BigDecimal remaining,
+                              BigDecimal savingsRate) {
     }
 }

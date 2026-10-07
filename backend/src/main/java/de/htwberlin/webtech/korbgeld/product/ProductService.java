@@ -1,7 +1,9 @@
 package de.htwberlin.webtech.korbgeld.product;
 
+import de.htwberlin.webtech.korbgeld.common.error.BadRequestException;
 import de.htwberlin.webtech.korbgeld.common.error.NotFoundException;
 import de.htwberlin.webtech.korbgeld.product.OpenFoodFactsClient.OffProduct;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,21 +20,25 @@ public class ProductService {
         this.openFoodFactsClient = openFoodFactsClient;
     }
 
+    /** Vorschläge: gemeinsame Produkte und die eigenen, höchstens 10. */
     @Transactional(readOnly = true)
-    public List<ProductResponse> search(String query) {
+    public List<ProductResponse> search(Long userId, String query) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
-        return productRepository.findTop10ByNameContainingIgnoreCaseOrderByNameAsc(query.trim()).stream()
+        return productRepository.searchVisible(query.trim(), userId, PageRequest.of(0, 10)).stream()
                 .map(ProductResponse::from)
                 .toList();
     }
 
-    /** Erst in der eigenen Datenbank (Cache), dann bei Open Food Facts; neue Treffer werden gespeichert. */
-    @Transactional
+    /**
+     * Erst in der eigenen Datenbank (Cache), dann bei Open Food Facts; neue Treffer werden gespeichert.
+     * Bewusst ohne @Transactional: Während des externen Aufrufs (bis 3 s) soll keine Datenbankverbindung
+     * aus dem kleinen Pool blockiert sein. Jeder Repository-Aufruf hat seine eigene kurze Transaktion.
+     */
     public ProductResponse findByBarcode(String barcode) {
         if (!barcode.matches("\\d{8,14}")) {
-            throw new NotFoundException("Das ist kein gültiger Barcode.");
+            throw new BadRequestException("Ein Barcode besteht aus 8 bis 14 Ziffern.");
         }
         return productRepository.findByBarcode(barcode)
                 .map(ProductResponse::from)
@@ -47,7 +53,9 @@ public class ProductService {
         String category = categoryOf(off.categoriesTags());
         String nutriScore = off.nutriScore() != null && off.nutriScore().length() == 1
                 ? off.nutriScore().toUpperCase() : null;
-        return new Product(name, barcode, category, off.imageUrl(), nutriScore, ProductSource.OPEN_FOOD_FACTS);
+        // Überlange Bild-URLs passen nicht in die Spalte (500 Zeichen) und werden weggelassen
+        String imageUrl = off.imageUrl() != null && off.imageUrl().length() <= 500 ? off.imageUrl() : null;
+        return new Product(name, barcode, category, imageUrl, nutriScore, ProductSource.OPEN_FOOD_FACTS);
     }
 
     // Aus "en:plant-based-milks" wird "plant based milks"

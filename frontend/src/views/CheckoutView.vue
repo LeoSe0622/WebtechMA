@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { fetchListItems } from '@/api/listItems'
 import { completePurchase, fetchStores, type CompletePurchaseResponse, type Store } from '@/api/purchases'
 import { ApiError, loadPage } from '@/api/client'
-import { formatEuro } from '@/config'
+import { formatEuro, parseEuro } from '@/config'
 import type { ListItem } from '@/types/listItem'
 
 const checkedItems = ref<ListItem[]>([])
@@ -32,8 +32,8 @@ onMounted(async () => {
   }
 })
 
-// "12,34" oder "12.34" → 12.34; ungültige Eingaben ergeben NaN
-const total = computed(() => Number(totalText.value.replace(',', '.')))
+// "12,34", "12.34" oder "1.000" → Zahl; ungültige Eingaben ergeben NaN
+const total = computed(() => parseEuro(totalText.value))
 const totalValid = computed(() => total.value >= 0.01 && total.value <= 1000)
 const storeValid = computed(() => storeId.value !== 'new' || newStoreName.value.trim().length > 0)
 

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.YearMonth;
+import java.util.Optional;
 
 @Service
 public class BudgetService {
@@ -41,7 +42,7 @@ public class BudgetService {
     public BudgetResponse get(Long userId, YearMonth month) {
         MonthlyBudget budget = budgetRepository.findByOwnerIdAndYearMonth(userId, month)
                 .orElseThrow(() -> new NotFoundException("Für " + month + " ist noch kein Budget angelegt."));
-        return new BudgetResponse(month, budget.getAmount(), isLocked(userId, month));
+        return new BudgetResponse(month, budget.getAmount(), hasPurchases(userId, month));
     }
 
     @Transactional
@@ -50,8 +51,10 @@ public class BudgetService {
         if (month.isBefore(current) || month.isAfter(current.plusMonths(1))) {
             throw new BadRequestException("Ein Budget kannst du nur für diesen und den nächsten Monat festlegen.");
         }
-        // Sperre: Sobald im Monat ein Einkauf erfasst ist, bleibt das Budget, wie es ist
-        if (isLocked(userId, month)) {
+        // Sperre: Ein vorhandenes Budget ist nur änderbar, bis im Monat der erste Einkauf erfasst ist.
+        // Ein erstes Budget darf man auch danach noch anlegen (Review 02, M2; E15).
+        Optional<MonthlyBudget> existing = budgetRepository.findByOwnerIdAndYearMonth(userId, month);
+        if (existing.isPresent() && hasPurchases(userId, month)) {
             throw new BudgetLockedException();
         }
         AppUser user = appUserRepository.findById(userId)
@@ -62,8 +65,7 @@ public class BudgetService {
                     + maxPerPerson + " € pro Person im Haushalt).");
         }
 
-        MonthlyBudget budget = budgetRepository.findByOwnerIdAndYearMonth(userId, month)
-                .orElseGet(() -> new MonthlyBudget(user, month, amount));
+        MonthlyBudget budget = existing.orElseGet(() -> new MonthlyBudget(user, month, amount));
         budget.changeAmount(amount);
         budgetRepository.save(budget);
         return new BudgetResponse(month, budget.getAmount(), false);
@@ -76,7 +78,8 @@ public class BudgetService {
         BigDecimal amount = budgetRepository.findByOwnerIdAndYearMonth(userId, current)
                 .map(MonthlyBudget::getAmount).orElse(null);
         BigDecimal remaining = amount == null ? null : BudgetMath.remaining(amount, spent);
-        return new BudgetSummaryResponse(current, amount, spent, remaining, isLocked(userId, current),
+        boolean locked = amount != null && hasPurchases(userId, current);
+        return new BudgetSummaryResponse(current, amount, spent, remaining, locked,
                 lastCompleted(userId, current.minusMonths(1)));
     }
 
@@ -93,12 +96,13 @@ public class BudgetService {
                 .map(budget -> {
                     BigDecimal spent = spentIn(userId, month);
                     return new MonthResult(month, budget.getAmount(), spent,
+                            BudgetMath.remaining(budget.getAmount(), spent),
                             BudgetMath.savingsRate(budget.getAmount(), spent));
                 })
                 .orElse(null);
     }
 
-    private boolean isLocked(Long userId, YearMonth month) {
+    private boolean hasPurchases(Long userId, YearMonth month) {
         return purchaseRepository.existsByOwnerIdAndDateBetween(userId, month.atDay(1), month.atEndOfMonth());
     }
 

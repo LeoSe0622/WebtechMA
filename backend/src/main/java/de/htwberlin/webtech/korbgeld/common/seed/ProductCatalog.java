@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /** Gemeinsamer Katalog mit typischen Supermarktprodukten, bewusst ohne Barcodes (keine erfundenen Barcodes). */
 @Component
@@ -58,15 +59,21 @@ public class ProductCatalog {
     @Transactional
     public void ensureCatalog() {
         PRODUCTS.forEach((name, category) -> {
-            if (productRepository.findByNameIgnoreCase(name).isEmpty()) {
+            if (findCatalogProduct(name).isEmpty()) {
                 productRepository.save(new Product(name, null, category, null, null, ProductSource.MANUAL));
             }
         });
     }
 
     public Product get(String name) {
-        return productRepository.findByNameIgnoreCase(name)
+        return findCatalogProduct(name)
                 .orElseThrow(() -> new IllegalStateException("Katalogprodukt fehlt: " + name));
+    }
+
+    // Nur echte Katalogprodukte: gemeinsam, manuell angelegt, das älteste bei gleichem Namen (Review 02, B1)
+    private Optional<Product> findCatalogProduct(String name) {
+        return productRepository.findFirstBySourceAndCreatedByIsNullAndNameIgnoreCaseOrderByIdAsc(
+                ProductSource.MANUAL, name);
     }
 
     public List<String> names() {

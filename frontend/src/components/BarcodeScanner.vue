@@ -8,6 +8,7 @@ const emit = defineEmits<{ detected: [code: string]; close: [] }>()
 const video = ref<HTMLVideoElement | null>(null)
 const error = ref<string | null>(null)
 let controls: IScannerControls | null = null
+let closed = false
 
 onMounted(async () => {
   try {
@@ -18,8 +19,12 @@ onMounted(async () => {
         emit('detected', result.getText())
       }
     })
+    // Wurde der Scanner geschlossen, während die Kamera noch startete: sofort wieder aus
+    if (closed) {
+      stop()
+    }
   } catch {
-    error.value = 'Die Kamera ist nicht verfügbar. Gib die Barcode-Nummer unten von Hand ein.'
+    error.value = 'Die Kamera ist nicht verfügbar. Gib die Barcode-Nummer oben von Hand ein.'
   }
 })
 
@@ -28,7 +33,10 @@ function stop() {
   controls = null
 }
 
-onBeforeUnmount(stop)
+onBeforeUnmount(() => {
+  closed = true
+  stop()
+})
 </script>
 
 <template>

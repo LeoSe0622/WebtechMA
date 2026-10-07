@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { fetchBudget, saveBudget, type Budget } from '@/api/budget'
 import { ApiError } from '@/api/client'
 import { useAuthStore } from '@/stores/auth'
-import { formatEuro } from '@/config'
+import { formatEuro, parseEuro } from '@/config'
 
 const auth = useAuthStore()
 
@@ -26,10 +26,11 @@ interface MonthState {
   input: string
   message: string | null
   error: string | null
+  busy: boolean
 }
 
 const months = ref<MonthState[]>([monthKey(0), monthKey(1)].map((key) => ({
-  key, budget: null, input: '', message: null, error: null,
+  key, budget: null, input: '', message: null, error: null, busy: false,
 })))
 const loading = ref(true)
 const maxBudget = (auth.user?.householdSize ?? 1) * 500
@@ -52,16 +53,19 @@ onMounted(async () => {
 async function save(month: MonthState) {
   month.message = null
   month.error = null
-  const amount = Number(month.input.replace(',', '.'))
+  const amount = parseEuro(month.input)
   if (!(amount >= 1)) {
     month.error = 'Gib einen Betrag ab 1 € ein.'
     return
   }
+  month.busy = true
   try {
     month.budget = await saveBudget(month.key, Math.round(amount * 100) / 100)
     month.message = 'Budget gespeichert.'
   } catch (e) {
     month.error = e instanceof ApiError ? e.message : 'Speichern hat nicht geklappt.'
+  } finally {
+    month.busy = false
   }
 }
 </script>
@@ -90,7 +94,7 @@ async function save(month: MonthState) {
             Betrag in €
             <input v-model="month.input" inputmode="decimal" placeholder="z. B. 260" />
           </label>
-          <button class="button primary" type="submit">{{ month.budget ? 'Budget ändern' : 'Budget anlegen' }}</button>
+          <button class="button primary" type="submit" :disabled="month.busy">{{ month.budget ? 'Budget ändern' : 'Budget anlegen' }}</button>
         </template>
         <p v-if="month.message" class="ok" role="status">{{ month.message }}</p>
         <p v-if="month.error" class="error" role="alert">{{ month.error }}</p>

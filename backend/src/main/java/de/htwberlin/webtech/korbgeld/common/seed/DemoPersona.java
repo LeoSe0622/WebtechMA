@@ -36,8 +36,10 @@ public class DemoPersona {
 
     static final BigDecimal MONTHLY_BUDGET = new BigDecimal("260.00");
 
-    // Sparquote je abgeschlossenem Monat, ältester zuerst. -0.06 = ein Monat über Budget.
-    private static final double[] SAVING_RATES = {0.12, 0.05, 0.18, 0.00, 0.22, 0.09, -0.06, 0.15, 0.25, 0.08, 0.14, 0.20};
+    // Sparquote je abgeschlossenem Monat, ältester zuerst. -0.06 = ein Monat über Budget. Als Text, damit
+    // BigDecimal exakt rechnet (nie double bei Geld)
+    private static final List<String> SAVING_RATES =
+            List.of("0.12", "0.05", "0.18", "0.00", "0.22", "0.09", "-0.06", "0.15", "0.25", "0.08", "0.14", "0.20");
     private static final int[] PURCHASES_PER_MONTH = {4, 3, 5, 6, 3, 4, 6, 5, 3, 4, 5, 4};
     private static final List<String> STORES = List.of("Lidl Kreuzberg", "Rewe Oranienstraße", "Aldi Süd");
 
@@ -78,7 +80,7 @@ public class DemoPersona {
         for (int i = 0; i < 12; i++) {
             YearMonth month = currentMonth.minusMonths(12 - i);
             budgetRepository.save(new MonthlyBudget(user, month, MONTHLY_BUDGET));
-            BigDecimal spent = MONTHLY_BUDGET.multiply(BigDecimal.valueOf(1 - SAVING_RATES[i]))
+            BigDecimal spent = MONTHLY_BUDGET.multiply(BigDecimal.ONE.subtract(new BigDecimal(SAVING_RATES.get(i))))
                     .setScale(2, RoundingMode.HALF_UP);
             addPurchases(user, stores, month, spent, PURCHASES_PER_MONTH[i], month.lengthOfMonth(), random);
         }

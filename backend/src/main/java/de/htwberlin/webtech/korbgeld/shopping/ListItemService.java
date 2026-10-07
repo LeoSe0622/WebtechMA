@@ -7,7 +7,6 @@ import de.htwberlin.webtech.korbgeld.pantry.PantryItem;
 import de.htwberlin.webtech.korbgeld.pantry.PantryItemRepository;
 import de.htwberlin.webtech.korbgeld.product.Product;
 import de.htwberlin.webtech.korbgeld.product.ProductRepository;
-import de.htwberlin.webtech.korbgeld.product.ProductSource;
 import de.htwberlin.webtech.korbgeld.shopping.ListItemDtos.CreateListItemRequest;
 import de.htwberlin.webtech.korbgeld.shopping.ListItemDtos.CreateListItemResponse;
 import de.htwberlin.webtech.korbgeld.shopping.ListItemDtos.PantryHint;
@@ -48,7 +47,7 @@ public class ListItemService {
 
     @Transactional
     public CreateListItemResponse create(Long userId, CreateListItemRequest request) {
-        Product product = resolveProduct(request);
+        Product product = resolveProduct(userId, request);
 
         // Vorrats-Warnung: Steht das Produkt schon im Vorrat, erst nachfragen (außer force)
         Optional<PantryHint> inPantry = pantryHint(userId, product.getId());
@@ -84,18 +83,19 @@ public class ListItemService {
                 .orElseThrow(() -> new NotFoundException("Diesen Listeneintrag gibt es nicht."));
     }
 
-    // Abgleich über die productId; ohne ID wird ein gleichnamiges Produkt genommen oder neu angelegt (E14)
-    private Product resolveProduct(CreateListItemRequest request) {
+    // Abgleich über die productId; ohne ID: eigenes oder gemeinsames gleichnamiges Produkt, sonst neu (E14, E17)
+    private Product resolveProduct(Long userId, CreateListItemRequest request) {
         if (request.productId() != null) {
-            return productRepository.findById(request.productId())
+            return productRepository.findVisible(request.productId(), userId)
                     .orElseThrow(() -> new NotFoundException("Dieses Produkt gibt es nicht."));
         }
         if (request.productName() == null || request.productName().isBlank()) {
             throw new BadRequestException("Bitte ein Produkt auswählen oder einen Namen eingeben.");
         }
         String name = request.productName().trim();
-        return productRepository.findByNameIgnoreCase(name)
-                .orElseGet(() -> productRepository.save(new Product(name, ProductSource.MANUAL)));
+        return productRepository.findFirstByCreatedByAndNameIgnoreCaseOrderByIdAsc(userId, name)
+                .or(() -> productRepository.findFirstByCreatedByIsNullAndNameIgnoreCaseOrderByIdAsc(name))
+                .orElseGet(() -> productRepository.save(Product.ownedBy(userId, name)));
     }
 
     private Optional<PantryHint> pantryHint(Long userId, Long productId) {

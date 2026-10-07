@@ -34,6 +34,10 @@ public class Product {
     @Column(nullable = false, length = 20)
     private ProductSource source;
 
+    // Nutzer-ID bei selbst eingetippten Produkten (nur für ihn sichtbar); null bei Katalog und Open Food Facts
+    @Column(name = "created_by")
+    private Long createdBy;
+
     protected Product() {
         // für JPA
     }
@@ -52,8 +56,19 @@ public class Product {
         this.source = source;
     }
 
+    /** Ein Produkt, das ein Nutzer selbst eingetippt hat. */
+    public static Product ownedBy(Long userId, String name) {
+        Product product = new Product(name, ProductSource.MANUAL);
+        product.createdBy = userId;
+        return product;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
     }
 
     public String getName() {

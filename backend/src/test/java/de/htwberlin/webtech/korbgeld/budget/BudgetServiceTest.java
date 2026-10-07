@@ -48,12 +48,24 @@ class BudgetServiceTest {
     }
 
     @Test
-    void setBudgetIsRejectedOnceAPurchaseExistsInTheMonth() {
+    void changingAnExistingBudgetIsRejectedOnceAPurchaseExistsInTheMonth() {
+        when(budgetRepository.findByOwnerIdAndYearMonth(USER_ID, OCTOBER))
+                .thenReturn(Optional.of(new MonthlyBudget(null, OCTOBER, new BigDecimal("250.00"))));
         when(purchaseRepository.existsByOwnerIdAndDateBetween(eq(USER_ID), any(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> budgetService.set(USER_ID, OCTOBER, new BigDecimal("300.00")))
                 .isInstanceOf(BudgetLockedException.class);
         verify(budgetRepository, never()).save(any());
+    }
+
+    @Test
+    void aFirstBudgetMayStillBeCreatedAfterAPurchase() {
+        // Wer zuerst einkauft, soll nicht in einer Sackgasse landen (Review 02, M2)
+        when(purchaseRepository.existsByOwnerIdAndDateBetween(eq(USER_ID), any(), any())).thenReturn(true);
+        when(budgetRepository.save(any())).thenAnswer(call -> call.getArgument(0));
+
+        assertThat(budgetService.set(USER_ID, OCTOBER, new BigDecimal("300.00")).amount())
+                .isEqualByComparingTo("300.00");
     }
 
     @Test

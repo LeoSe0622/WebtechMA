@@ -98,6 +98,22 @@ class PurchaseServiceTest {
         verify(listItemRepository).deleteAll(checked);
     }
 
+    @Test
+    void freshPurchaseIsNotMergedIntoAnEntryWithBestBeforeDate() {
+        List<ListItem> checked = List.of(item(milk, 1));
+        when(listItemRepository.findAllByOwnerIdAndCheckedTrue(USER_ID)).thenReturn(checked);
+        PantryItem expiredMilk = new PantryItem(owner, milk, 1, LocalDate.of(2026, 10, 1), clock.instant());
+        when(pantryItemRepository.findAllByOwnerIdAndProductId(USER_ID, 10L)).thenReturn(List.of(expiredMilk));
+
+        purchaseService.complete(USER_ID, request("1.99"));
+
+        // Die abgelaufene Milch bleibt, wie sie ist; die neue bekommt einen eigenen Eintrag
+        assertThat(expiredMilk.getQuantity()).isEqualTo(1);
+        ArgumentCaptor<PantryItem> created = ArgumentCaptor.forClass(PantryItem.class);
+        verify(pantryItemRepository).save(created.capture());
+        assertThat(created.getValue().getBestBefore()).isNull();
+    }
+
     private CompletePurchaseRequest request(String total) {
         return new CompletePurchaseRequest(null, "Lidl", new BigDecimal(total));
     }

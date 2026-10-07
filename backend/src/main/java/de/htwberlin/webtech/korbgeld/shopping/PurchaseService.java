@@ -100,12 +100,14 @@ public class PurchaseService {
                 .orElseGet(() -> storeRepository.save(new Store(owner, name)));
     }
 
+    // Zusammenfassen nur mit einem Eintrag ohne Haltbarkeitsdatum: Frisch Gekauftes soll nicht in einem
+    // (womöglich abgelaufenen) Eintrag mit altem Datum landen (Review 02, m5; E18)
     private void addToPantry(Long userId, AppUser owner, Product product, int quantity) {
-        List<PantryItem> existing = pantryItemRepository.findAllByOwnerIdAndProductId(userId, product.getId());
-        if (existing.isEmpty()) {
-            pantryItemRepository.save(new PantryItem(owner, product, quantity, null, clock.instant()));
-        } else {
-            existing.getFirst().increaseQuantity(quantity);
-        }
+        pantryItemRepository.findAllByOwnerIdAndProductId(userId, product.getId()).stream()
+                .filter(item -> item.getBestBefore() == null)
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> item.increaseQuantity(quantity),
+                        () -> pantryItemRepository.save(new PantryItem(owner, product, quantity, null, clock.instant())));
     }
 }

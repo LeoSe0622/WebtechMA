@@ -5,7 +5,7 @@ import ShoppingListView from '../ShoppingListView.vue'
 import { createListItem, fetchListItems, updateListItem, type CreateListItemResponse } from '@/api/listItems'
 import { fetchBudgetSummary, type BudgetSummary } from '@/api/budget'
 import type { ListItem } from '@/types/listItem'
-import type { Product } from '@/api/products'
+import { searchProducts, type Product } from '@/api/products'
 
 // Attrappen statt echter Backend-Aufrufe (wie @MockitoBean im Backend)
 vi.mock('@/api/listItems', () => ({
@@ -85,6 +85,29 @@ describe('ShoppingListView', () => {
     expect(createListItem).toHaveBeenLastCalledWith({ productName: 'Spaghetti', quantity: 1, force: true })
     expect(wrapper.findAll('li.row')).toHaveLength(4)
     expect(wrapper.find('.warning').exists()).toBe(false)
+  })
+
+  it('schickt nach Klick auf einen Vorschlag die productId statt des Namens', async () => {
+    vi.useFakeTimers()
+    vi.mocked(searchProducts).mockResolvedValue([
+      { id: 42, name: 'Haferflocken', barcode: null, category: null, imageUrl: null, nutriScore: null, source: 'MANUAL' },
+    ])
+    vi.mocked(createListItem).mockResolvedValue({
+      item: { id: 9, productId: 42, productName: 'Haferflocken', quantity: 1, checked: false, createdAt: '2026-10-07T11:00:00Z' },
+      alreadyInPantry: null,
+    })
+    const wrapper = await mountView()
+
+    await wrapper.find('input[placeholder^="Artikel"]').setValue('Hafer')
+    await vi.advanceTimersByTimeAsync(300)   // Verzögerung der Suche abwarten
+    await flushPromises()
+    await wrapper.find('.suggestions button').trigger('click')
+    await vi.advanceTimersByTimeAsync(300)
+    await wrapper.find('form.add').trigger('submit')
+    await flushPromises()
+    vi.useRealTimers()
+
+    expect(createListItem).toHaveBeenCalledWith({ productId: 42, quantity: 1, force: false })
   })
 
   it('zeigt eine Fehlermeldung, wenn das Laden scheitert', async () => {

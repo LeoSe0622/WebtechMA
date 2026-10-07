@@ -37,10 +37,10 @@ async function changeDate(item: PantryItem, value: string) {
   )
 }
 
-// Verbrauchen: Menge minus 1; bei 0 verschwindet der Eintrag
-async function consume(item: PantryItem) {
+// Verbrauchen: amount Stück weniger; bei 0 verschwindet der Eintrag
+async function consume(item: PantryItem, amount = 1) {
   await run(async () => {
-    const updated = await consumePantryItem(item.id)
+    const updated = await consumePantryItem(item.id, amount)
     if (updated) {
       replace(updated)
     } else {
@@ -87,7 +87,7 @@ async function run(action: () => Promise<void>) {
             <button class="step" type="button" :aria-label="`${item.productName} weniger`" @click="changeQuantity(item, -1)">−</button>
             <span class="amount">{{ item.quantity }}</span>
             <button class="step" type="button" :aria-label="`${item.productName} mehr`" @click="changeQuantity(item, 1)">+</button>
-            <button class="button" type="button" @click="consume(item)">Verbraucht</button>
+            <button class="button" type="button" @click="consume(item, item.quantity)">Alles verbraucht</button>
           </div>
         </li>
       </ul>

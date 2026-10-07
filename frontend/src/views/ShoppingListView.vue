@@ -23,6 +23,7 @@ const selected = ref<Product | null>(null)
 const barcode = ref('')
 const scanning = ref(false)
 const notice = ref<string | null>(null)
+const busy = ref(false)
 const pantryWarning = ref<{ hint: PantryHint; name: string; retry: () => Promise<void> } | null>(null)
 
 // computed: abgeleitete Werte, werden automatisch neu berechnet
@@ -45,6 +46,10 @@ onMounted(async () => {
 // Vorschläge beim Tippen, kurz verzögert, damit nicht jeder Buchstabe eine Anfrage auslöst
 let searchTimer: ReturnType<typeof setTimeout> | undefined
 watch(query, (text) => {
+  // Nach Klick auf einen Vorschlag steht dessen Name im Feld: Auswahl behalten, nicht neu suchen
+  if (selected.value && text === selected.value.name) {
+    return
+  }
   selected.value = null
   clearTimeout(searchTimer)
   if (text.trim().length < 2) {
@@ -77,6 +82,7 @@ async function add(force = false) {
 
 async function submit(request: Parameters<typeof createListItem>[0], name: string) {
   notice.value = null
+  busy.value = true
   try {
     const response = await createListItem(request)
     if (response.alreadyInPantry) {
@@ -96,12 +102,15 @@ async function submit(request: Parameters<typeof createListItem>[0], name: strin
     suggestions.value = []
   } catch (e) {
     notice.value = e instanceof ApiError ? e.message : 'Hinzufügen hat nicht geklappt. Versuch es noch einmal.'
+  } finally {
+    busy.value = false
   }
 }
 
 async function lookupBarcode(code: string) {
   scanning.value = false
   notice.value = null
+  busy.value = true
   try {
     const product = await findProductByBarcode(code.trim())
     barcode.value = ''
@@ -112,9 +121,13 @@ async function lookupBarcode(code: string) {
       notice.value = 'Diesen Barcode kennen wir nicht. Gib den Namen oben von Hand ein.'
     } else if (e instanceof ApiError && e.status === 502) {
       notice.value = 'Die Produktdatenbank antwortet gerade nicht. Gib den Namen oben von Hand ein.'
+    } else if (e instanceof ApiError && e.status === 400) {
+      notice.value = e.message
     } else {
       notice.value = 'Der Barcode konnte nicht geprüft werden.'
     }
+  } finally {
+    busy.value = false
   }
 }
 
@@ -162,7 +175,7 @@ async function remove(id: number) {
             <span class="sr-only">Menge</span>
             <input v-model.number="quantity" class="qty" type="number" min="1" max="99" />
           </label>
-          <button class="button primary" type="submit">Hinzufügen</button>
+          <button class="button primary" type="submit" :disabled="busy">Hinzufügen</button>
         </div>
         <ul v-if="suggestions.length > 0" class="suggestions" role="listbox">
           <li v-for="product in suggestions" :key="product.id">
@@ -172,8 +185,8 @@ async function remove(id: number) {
 
         <div class="barcode-row">
           <input v-model="barcode" inputmode="numeric" placeholder="Barcode-Nummer" aria-label="Barcode-Nummer" />
-          <button class="button" type="button" :disabled="!barcode.trim()" @click="lookupBarcode(barcode)">
-            Barcode suchen
+          <button class="button" type="button" :disabled="busy || !barcode.trim()" @click="lookupBarcode(barcode)">
+            {{ busy ? 'Suche …' : 'Barcode suchen' }}
           </button>
           <button class="button" type="button" @click="scanning = !scanning">Kamera</button>
         </div>
@@ -188,7 +201,7 @@ async function remove(id: number) {
           >).
         </p>
         <div class="actions">
-          <button class="button primary" type="button" @click="pantryWarning.retry()">Trotzdem hinzufügen</button>
+          <button class="button primary" type="button" :disabled="busy" @click="pantryWarning.retry()">Trotzdem hinzufügen</button>
           <button class="button" type="button" @click="pantryWarning = null">Nicht hinzufügen</button>
         </div>
       </div>

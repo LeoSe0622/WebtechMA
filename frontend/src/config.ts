@@ -17,3 +17,19 @@ const euroFormat = new Intl.NumberFormat('de-DE', { style: 'currency', currency:
 export function formatEuro(amount: number | string): string {
   return euroFormat.format(Number(amount))
 }
+
+/**
+ * Liest deutsche Betragseingaben: "12,34" → 12.34, "1.000" → 1000, "1.000,50" → 1000.5, "12.34" → 12.34.
+ * Ungültige Eingaben ergeben NaN.
+ */
+export function parseEuro(text: string): number {
+  const cleaned = text.trim().replace(/€/g, '').replace(/\s/g, '')
+  if (cleaned.includes(',')) {
+    // Komma ist das Dezimalzeichen, Punkte sind Tausendertrenner
+    return Number(cleaned.replace(/\./g, '').replace(',', '.'))
+  }
+  if (/^\d{1,3}(\.\d{3})+$/.test(cleaned)) {
+    return Number(cleaned.replace(/\./g, ''))
+  }
+  return cleaned === '' ? NaN : Number(cleaned)
+}

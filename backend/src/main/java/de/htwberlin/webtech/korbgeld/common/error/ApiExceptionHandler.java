@@ -1,6 +1,8 @@
 package de.htwberlin.webtech.korbgeld.common.error;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,6 +25,8 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler(NotFoundException.class)
     ProblemDetail handleNotFound(NotFoundException e, HttpServletRequest request) {
@@ -64,6 +68,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     ProblemDetail handleInvalidCredentials(InvalidCredentialsException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    // Alles Unerwartete: ins Log schreiben, dem Nutzer nur eine allgemeine Meldung zeigen (keine Interna)
+    @ExceptionHandler(Exception.class)
+    ProblemDetail handleUnexpected(Exception e, HttpServletRequest request) {
+        log.error("Unerwarteter Fehler bei {} {}", request.getMethod(), request.getRequestURI(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Da ist etwas schiefgelaufen. Versuch es gleich noch einmal.");
     }
 
     // Unbekannter Pfad, z. B. GET /api/gibt-es-nicht

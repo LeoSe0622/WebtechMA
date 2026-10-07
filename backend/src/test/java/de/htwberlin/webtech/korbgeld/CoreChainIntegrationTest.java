@@ -61,8 +61,7 @@ class CoreChainIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"storeName\":\"Testmarkt\",\"totalAmount\":12.34}"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.purchase.storeName").value("Testmarkt"))
-                .andExpect(jsonPath("$.remainingBudget").value(remainingBefore.subtract(new BigDecimal("12.34")).doubleValue()));
+                .andExpect(jsonPath("$.purchase.storeName").value("Testmarkt"));
 
         // 4. Der Artikel steht im Vorrat und ist nicht mehr auf der Liste
         String pantry = mockMvc.perform(get("/api/pantry-items").header("Authorization", bearer(token)))

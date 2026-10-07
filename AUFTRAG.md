@@ -7,7 +7,7 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 | Prompt | Datei | Modus | Inhalt |
 |---|---|---|---|
 | 1 Lernen und Vorbereiten | `PROMPT-1-LERNEN.md` | interaktiv, Output-Stil „Learning“ | Phase 0 und 1 gemeinsam mit dem Team, alles erklärt |
-| 2 Bauen | `goal-befehl.txt` | autonom, Halt nur bei Frontend-Backend-Verbindung und Milestone-Abnahmen (Regel 15), Output-Stil „Explanatory“ | Phase 2 bis 5 |
+| 2 Bauen | `goal-befehl.txt` | autonom ohne Haltepunkte (E10), Abnahme durch das Team am Ende, Output-Stil „Explanatory“ | Phase 2 bis 5 |
 | 3 Verstehen | `PROMPT-3-VERSTEHEN.md` | interaktiv, Output-Stil „Learning“ | Code-Tour, Prüfungsfragen, Spickzettel |
 
 **Änderungen gegenüber v1.0:** Ablauf in drei Prompts. Neue Kostenregel (Abschnitt 3). Datenbank bei Neon statt bei Render, weil die kostenlose Render-Datenbank nach 30 Tagen gelöscht wird. Kein `render.yaml`-Blueprint mehr, sondern eine manuelle Anleitung `docs/DEPLOY.md`. Lokale Entwicklung geht auch ohne Docker über einen Neon-Branch. Spring Security kommt erst in Phase 2. Neuer Lernordner `docs/lernen/`.

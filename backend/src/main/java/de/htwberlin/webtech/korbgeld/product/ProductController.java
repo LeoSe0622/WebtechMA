@@ -1,5 +1,8 @@
 package de.htwberlin.webtech.korbgeld.product;
 
+import de.htwberlin.webtech.korbgeld.common.CurrentUser;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/** Der Produktkatalog ist gemeinsam für alle Nutzer, deshalb ohne Besitzer. */
+/** Katalog- und Open-Food-Facts-Produkte sind gemeinsam, selbst eingetippte nur für ihren Ersteller sichtbar. */
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -21,8 +24,9 @@ public class ProductController {
 
     // Vorschläge beim Tippen: GET /api/products?query=milch
     @GetMapping
-    public List<ProductResponse> search(@RequestParam(defaultValue = "") String query) {
-        return productService.search(query);
+    public List<ProductResponse> search(@AuthenticationPrincipal Jwt jwt,
+                                        @RequestParam(defaultValue = "") String query) {
+        return productService.search(CurrentUser.id(jwt), query);
     }
 
     @GetMapping("/barcode/{code}")
