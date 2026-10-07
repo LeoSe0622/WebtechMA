@@ -145,3 +145,19 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - Jackson 3 (Spring Boot 4) lehnt fehlende primitive Felder ab → `Boolean` statt `boolean` in Requests (E16).
   - `RestClient` kodiert Kommas in URI-Variablen als `%2C`. Feste Teile der URL gehören direkt in den Pfad.
   - `Intl.NumberFormat` trennt Betrag und € durch ein geschütztes Leerzeichen.
+
+## Review 02 und Behebung (07.10.2026)
+
+- **Bericht:** `docs/reviews/02-kern.md`. 1 Blocker, 4 Major, 16 Minor. Umgang: `docs/ENTSCHEIDUNGEN.md` E17–E19.
+- **Blocker B1:** Produktnamen sind nicht eindeutig. Nach einem Scan mit Katalognamen (z. B. „Butter“) fand `findByNameIgnoreCase` zwei Treffer, und der Demo-Login scheiterte für alle mit 500. Behoben über `V5__add_product_created_by.sql`, `findFirst … OrderByIdAsc` und die Katalogsuche über Quelle und `created_by IS NULL`. Regressionstest: `CatalogAndSeparationIntegrationTest`.
+- **Weitere:** Eigene Freitext-Produkte sind nur noch für ihren Ersteller sichtbar (M3). Die Budget-Sperre gilt nur für das Ändern (M2). Ein Vorschlag-Klick schickt wieder die productId, der Watcher hatte sie verworfen (M1, mit Gegenprobe). Neue Tests für Läden, Vorrat, Registrierung, Budget und Einkauf (M4). `parseEuro` für „1.000“, Busy-Zustände, „Alles verbraucht“, `StoreService`, Ersatz-Handler für 500, `docs/IDEEN.md`.
+- **Lektionen:**
+  - `Optional`-Abfragen auf nicht eindeutige Spalten sind eine Zeitbombe: Sie funktionieren, bis der zweite Treffer kommt.
+  - Ein Vue-`watch` reagiert auch auf Änderungen, die der eigene Code gerade gemacht hat.
+  - Tests müssen die Fachregel prüfen (productId gesendet?), nicht nur, dass „etwas“ passiert.
+
+## Phase 4: Demo-Bereiche (07.10.2026)
+
+- **Backend:** `habit/HabitController.java` + `HabitService.java` (`GET /api/habits`), `leaderboard/Ranking.java` (reine Regeln: Sandbox raus, Sparquote absteigend, Gleichstand nach Serie, „Dein Platz wäre“), `leaderboard/LeaderboardService.java` (letzter abgeschlossener Monat, Serie bis 24 Monate, man selbst steht nie in der Liste), `invest/ModelPortfolio.java` (Enum, 30/70, 60/40, 100), `invest/InvestController.java` (`GET /api/invest/portfolios`). Tests jetzt 40: `RankingTest` (4) und `DemoAreasIntegrationTest` (3).
+- **Frontend:** `HabitsView`, `LeaderboardView`, `SavingsPlanView` mit `DemoBanner`, deaktivierten Buttons mit Tooltip „Kommt mit Milestone M4“ und dem Pflichthinweis auf dem Sparplan (wörtlich). Routen mit `meta.status: 'demo'`. Navigation bricht auf schmalen Bildschirmen in eine eigene Zeile um, statt versteckt zu scrollen (Review 02, m11). Tests jetzt 35.
+- **Konzepte:** reine Funktionen für Fachregeln (ohne Datenbank testbar), `Comparator.comparing(...).thenComparing(...)`, Enum mit Daten, ehrliche Kennzeichnung von Demo-Bereichen, CSS-Spezifität und Reihenfolge von Regeln.

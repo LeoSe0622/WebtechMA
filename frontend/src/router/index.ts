@@ -7,6 +7,9 @@ import BudgetView from '@/views/BudgetView.vue'
 import ShoppingListView from '@/views/ShoppingListView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import PantryView from '@/views/PantryView.vue'
+import HabitsView from '@/views/HabitsView.vue'
+import LeaderboardView from '@/views/LeaderboardView.vue'
+import SavingsPlanView from '@/views/SavingsPlanView.vue'
 import WorkInProgressView from '@/views/WorkInProgressView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import { HOME_PATH } from '@/config'
@@ -54,6 +57,24 @@ export function createAppRouter() {
         name: 'pantry',
         component: PantryView,
         meta: { status: 'ready', navLabel: 'Vorrat', navOrder: 4 },
+      },
+      {
+        path: '/gewohnheiten',
+        name: 'habits',
+        component: HabitsView,
+        meta: { status: 'demo', navLabel: 'Gewohnheiten', navOrder: 5, feature: 'Gewohnheiten', milestone: 'M4 · 13. Dez.' },
+      },
+      {
+        path: '/rangliste',
+        name: 'leaderboard',
+        component: LeaderboardView,
+        meta: { status: 'demo', navLabel: 'Rangliste', navOrder: 6, feature: 'Rangliste', milestone: 'M4 · 13. Dez.' },
+      },
+      {
+        path: '/sparplan',
+        name: 'savings-plan',
+        component: SavingsPlanView,
+        meta: { status: 'demo', navLabel: 'Sparplan', navOrder: 7, feature: 'Sparplan', milestone: 'M4 · 13. Dez.' },
       },
       {
         path: '/rezepte',

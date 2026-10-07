@@ -158,4 +158,13 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Datum:** 07.10.2026
 - **Behoben:** B1, M1–M4 (siehe E15, E17 und Tests), m1 (`parseEuro` für „1.000“ und „1.000,50“), m3 (Busy-Zustände), m4 („Alles verbraucht“ statt „Verbraucht“), m5 (E18), m6 (Ersatz-Handler für unerwartete Fehler mit 500 als ProblemDetail, zu lange Bild-URLs werden verworfen), m7 (ungültiges Barcode-Format → 400, kein externer Aufruf innerhalb einer Transaktion), m8 (`StoreService`), m9 (Scanner-Text und Kamera beim schnellen Schließen), m10 (Restbudget des Vormonats vom Backend, „über dem Budget“), m13 (Geldvergleich mit BigDecimal, Alibi-Test entfernt), m14 (Sparquoten der Persona als BigDecimal), m15 (Prompt-Tabelle, `docs/IDEEN.md`).
 - **In Phase 4 erledigt:** m11 (Navigation auf schmalen Bildschirmen).
-- **Zurückgestellt mit Grund:** m2 (Obergrenze im Frontend nur als Hinweistext, maßgeblich ist das Backend mit 409). m12 und m16 kommen als bekannte Risiken in STATUS.md und als Ideen in IDEEN.md. 401 ohne Body bleibt: Das Frontend reagiert nur auf den Status.
+- **Zurückgestellt mit Grund:** m2 (Obergrenze im Frontend nur als Hinweistext, maßgeblich ist das Backend mit 409).
+
+## E20: Demo-Bereiche in Phase 4 (Rangliste, Musterportfolios)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:**
+  - Rangliste: gewertet wird der letzte abgeschlossene Monat. Die **Serie** zählt aufeinanderfolgende abgeschlossene Monate bis dahin, in denen ein Budget existiert und die Ausgaben es nicht überschreiten (höchstens 24). Ein Monat ohne Budget oder über Budget unterbricht die Serie. Bei gleicher Sparquote und Serie entscheidet das Pseudonym alphabetisch, damit die Reihenfolge stabil bleibt. Der eingeloggte Nutzer steht nie selbst in der Liste. „Dein Platz wäre“ zählt alle, die strikt besser sind, plus 1. Die Regeln stehen als reine Funktionen in `leaderboard/Ranking.java`.
+  - Musterportfolios: `InvestController` liest direkt das Enum `ModelPortfolio`, ohne Service. Es gibt keine Datenbankabfrage und keine Logik, ein Service wäre eine leere Weiterleitung. Der Rechner zu M4 bekommt einen eigenen Service.
+- **Grund:** AUFTRAG.md, Abschnitt 7 nennt die Serie, ohne sie zu definieren (Review 00, m6).
+- **Verworfene Alternative:** Serie auch über Monate ohne Budget fortsetzen. Ohne Budget gibt es aber keine Sparquote, die man vergleichen könnte. m12 und m16 kommen als bekannte Risiken in STATUS.md und als Ideen in IDEEN.md. 401 ohne Body bleibt: Das Frontend reagiert nur auf den Status.

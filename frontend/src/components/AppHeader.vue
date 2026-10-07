@@ -52,8 +52,9 @@ async function logout() {
 <style scoped>
 .topbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
   padding: 8px 16px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -72,10 +73,27 @@ async function logout() {
 
 .nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   flex: 1;
-  overflow-x: auto;
-  scrollbar-width: none;
+}
+
+/* Schmale Bildschirme: Navigation als eigene Zeile unter Logo und Konto, alle Punkte sichtbar */
+@media (max-width: 719px) {
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  /* .topbar davor, damit die Regel stärker ist als die allgemeine .nav a weiter unten */
+  .topbar .nav a {
+    padding: 0 8px;
+    font-size: 0.9375rem;
+  }
+
+  .account {
+    margin-left: auto;
+  }
 }
 
 .nav a {
