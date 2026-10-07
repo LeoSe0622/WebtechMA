@@ -40,3 +40,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootRun') {
+	// Lokaler Start mit Dev-Profil (SQL-Log, später CORS für localhost:5173)
+	systemProperty 'spring.profiles.active', 'dev'
+}

@@ -1,0 +1,7 @@
+# Nur lokal aktiv (bootRun setzt das Profil "dev"), nicht auf Render
+logging:
+  level:
+    # Jedes SQL, das Hibernate an Postgres schickt
+    org.hibernate.SQL: debug
+    # Die Werte für die ?-Platzhalter im SQL
+    org.hibernate.orm.jdbc.bind: trace
