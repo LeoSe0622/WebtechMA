@@ -18,6 +18,11 @@ spring:
       # Das Schema gehört Flyway; Hibernate prüft nur, ob die Entities dazu passen
       ddl-auto: validate
 
+app:
+  cors:
+    # Welche Frontend-Adressen das Backend aufrufen dürfen (leer = niemand)
+    allowed-origins: ${FRONTEND_URL:}
+
 server:
   # Render gibt den Port über PORT vor
   port: ${PORT:8080}

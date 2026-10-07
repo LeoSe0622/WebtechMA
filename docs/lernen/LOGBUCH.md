@@ -74,3 +74,17 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
 - **Konzepte:** Single-File-Component (`<script setup>`, `<template>`, `<style scoped>`), Reaktivität mit `ref` und `computed`, Template-Syntax (`{{ }}`, `:attr`, `@event`, `v-for`/`:key`, `v-if`/`v-else`), Props und Emits (Daten nach unten, Ereignisse nach oben), Vue Router (`RouterView`, `RouterLink`, History-Modus), Pinia (zentrale Ablage, wird ab Phase 2 genutzt), Vite-Entwicklungsserver, Vitest mit `@vue/test-utils` (`mount`, `find`, `trigger`, `emitted`) in jsdom.
 - **Geprüft:** `npm run test:unit -- --run` (6/6), `npm run lint` (ohne Befund), `npm run build` (inkl. `vue-tsc`), Dev-Server liefert `/liste` aus.
 - **Stand M2 erreicht** (Listenansicht per `v-for`). Noch mit festen Daten, die Anbindung ans Backend folgt mit dem Team.
+
+## M2-Abnahme und Etappe 6: Frontend trifft Backend (07.10.2026)
+
+- **M2 abgenommen** durch das Team. Hinweis: PowerShell blockiert `npm.ps1` (Execution Policy). Lösung: `npm.cmd run dev` oder einmalig `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+- **Vom Team:** `CorsConfig.addCorsMappings` (TODO 1, fehlerfrei). TODO 2 begonnen (Code richtig, stand aber außerhalb der Funktion, daher `'return' … only … within a function body`). Danach hat das Team die restlichen TODOs an Claude übergeben.
+- **Entstanden:**
+  - `backend/.../common/CorsConfig.java`: `WebMvcConfigurer`, erlaubt `/api/**` für `app.cors.allowed-origins` mit GET, POST, PATCH, DELETE.
+  - `application.yml`: `app.cors.allowed-origins: ${FRONTEND_URL:}` (leer = niemand). `application-dev.yml`: `http://localhost:5173`.
+  - `frontend/env.d.ts`: Typ für `VITE_API_BASE_URL`.
+  - `frontend/src/api/listItems.ts`: `fetchListItems()` mit `fetch`, Prüfung von `response.ok`, `response.json()`.
+  - `frontend/src/views/ShoppingListView.vue`: lädt in `onMounted`, Zustände `loading` und `error`, Template mit `v-if` / `v-else-if` / `<template v-else>`.
+  - Tests: `CorsConfigTest` (erlaubter Origin → Header, fremder Origin → 403), `listItems.spec.ts` (Erfolg, HTTP 500), `ShoppingListView.spec.ts` mit `vi.mock` (Laden, Daten, Abhaken, Fehler, leer).
+- **Konzepte:** Same-Origin-Policy, Origin = Protokoll + Host + Port, CORS-Header `Access-Control-Allow-Origin`, Preflight (`OPTIONS`), `fetch`, Promise, `async`/`await`, `response.ok` (fetch wirft bei 4xx/5xx nicht), `onMounted`, `try`/`catch`/`finally`, Vite-Umgebungsvariablen nur mit Präfix `VITE_`, Attrappen im Frontend (`vi.mock`, `vi.stubGlobal`, `flushPromises`).
+- **Geprüft:** Backend-Tests ohne `.env` (wie in CI): 4/4 grün. Frontend 11/11, Lint und Build fehlerfrei. Echte Instanz auf Port 8081: `localhost:5173` → 200 mit Header, fremder Origin → 403, Preflight für PATCH → erlaubt.

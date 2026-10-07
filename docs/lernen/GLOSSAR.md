@@ -3,6 +3,7 @@
 Ein Satz pro Begriff, alphabetisch sortiert.
 
 - **API (REST-API)**: Die Schnittstelle des Backends. Das Frontend ruft Adressen wie `GET /api/list-items` auf und bekommt Daten als JSON zurück.
+- **async / await**: async markiert eine Funktion, die zwischendurch wartet. await wartet auf ein Promise, ohne den Browser zu blockieren.
 - **Auto-Configuration**: Spring Boot richtet Komponenten automatisch ein, wenn ihre Bedingungen erfüllt sind (z. B. Treiber im Klassenpfad → Datenbankverbindung).
 - **Bean**: Ein Objekt, das Spring erzeugt und verwaltet und per Dependency Injection an andere Klassen übergibt.
 - **CI (Continuous Integration)**: Bei jedem Push baut und testet ein Server automatisch den Code, bei uns GitHub Actions.
@@ -10,6 +11,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Commit**: Ein gespeicherter Schnappschuss des Projekts mit Nachricht, Autor und Zeitpunkt.
 - **computed**: Vue-Funktion für abgeleitete Werte, die automatisch neu berechnet werden, wenn sich ihre Grundlage ändert.
 - **Container**: Abgeschottete Laufzeitumgebung, in der ein Programm (z. B. Postgres) mit allem läuft, was es braucht, ohne es ins Betriebssystem zu installieren.
+- **CORS**: Erlaubnis des Servers per Header (Access-Control-Allow-Origin), dass JavaScript einer anderen Origin seine Antworten lesen darf.
 - **DataSource / Hikari**: Die DataSource liefert Datenbankverbindungen. Hikari ist ein Pool, der einige Verbindungen offen hält und an Anfragen verleiht.
 - **Dependency Injection**: Eine Klasse bekommt die Objekte, die sie braucht, über den Konstruktor von Spring übergeben, statt sie selbst mit new zu erzeugen.
 - **Docker Compose**: Beschreibt in `docker-compose.yml`, welche Container mit welchen Einstellungen laufen, und startet sie mit einem Befehl.
@@ -17,6 +19,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **DTO (Data Transfer Object)**: Einfaches Objekt nur für die Übertragung nach außen, damit die interne Entity nicht direkt preisgegeben wird.
 - **Entity**: Java-Klasse mit @Entity, deren Objekte Zeilen einer Datenbanktabelle entsprechen.
 - **.env**: Datei mit Zugangsdaten und Konfigurationswerten, die nur lokal existiert und nie ins Repo gelangt.
+- **fetch**: Eingebaute Browser-Funktion für HTTP-Anfragen. Gibt ein Promise auf die Antwort zurück und wirft bei 404 oder 500 keinen Fehler.
 - **Flyway / Migration**: Flyway führt versionierte SQL-Dateien (V1__…, V2__…) genau einmal und in Reihenfolge aus und merkt sich das in flyway_schema_history.
 - **.gitignore**: Liste von Dateien und Ordnern, die Git nicht verfolgt und die deshalb nie in einem Commit landen.
 - **Hibernate / JPA**: JPA ist der Java-Standard, um Objekte in Datenbanktabellen zu speichern. Hibernate ist die Implementierung, die Spring Boot dafür nutzt.
@@ -27,8 +30,11 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **MockMvc / Mockito**: MockMvc simuliert HTTP-Anfragen im Test ohne echten Server. Mockito ersetzt Abhängigkeiten durch Attrappen mit festen Antworten.
 - **N+1-Problem**: Statt einer Abfrage mit JOIN werden für N Einträge N zusätzliche Einzelabfragen geschickt. Wird mit @EntityGraph vermieden.
 - **Neon**: Anbieter für Postgres in der Cloud mit dauerhaft kostenlosem Tarif, bei uns ab M3 für die Produktionsdatenbank.
+- **onMounted**: Vue-Funktion, die Code ausführt, sobald die Komponente im Browser angezeigt wird. Typisch für das erste Laden von Daten.
 - **Pinia**: Zentrale Ablage für Zustand, den mehrere Komponenten teilen (z. B. das Login-Token ab Phase 2).
+- **Preflight**: Vorab-Anfrage (OPTIONS), mit der der Browser bei z. B. PATCH oder DELETE prüft, ob der Server die eigentliche Anfrage erlaubt.
 - **Profil (Spring)**: Benannte Konfigurationsvariante, z. B. dev, deren Einstellungen (application-dev.yml) nur gelten, wenn das Profil aktiv ist.
+- **Promise**: Versprechen auf ein späteres Ergebnis einer asynchronen Operation, vergleichbar mit CompletableFuture in Java.
 - **Props / Emits**: Props reichen Daten von der Eltern- an die Kindkomponente weiter. Emits melden Ereignisse vom Kind an die Eltern zurück.
 - **Push / Remote**: Das Remote ist die Kopie des Repos auf GitHub. `git push` überträgt lokale Commits dorthin.
 - **Reaktivität**: Vue merkt sich, welche Teile der Anzeige von welchen Daten abhängen, und aktualisiert genau diese Teile, wenn sich die Daten ändern.
@@ -37,6 +43,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Render**: Hosting-Dienst, auf dem Backend und Frontend öffentlich laufen (Modulvorgabe).
 - **Repository (Spring Data)**: Interface, zu dem Spring beim Start die Implementierung mit save, findAll usw. erzeugt. Methodennamen werden zu Abfragen.
 - **Review-Befund (Blocker / Major / Minor)**: Blocker muss sofort behoben werden. Major wird behoben oder begründet zurückgestellt. Minor ist eine Verbesserung ohne Dringlichkeit.
+- **Same-Origin-Policy**: Schutzregel des Browsers: JavaScript darf Antworten nur von derselben Origin (Protokoll, Host, Port) lesen, außer der Server erlaubt es per CORS.
 - **Staging-Bereich**: Zwischenablage von Git. Nur was dort per `git add` liegt, kommt in den nächsten Commit.
 - **Subagent**: Eigene Claude-Instanz mit leerem Kontext und begrenzten Werkzeugen, die eine Teilaufgabe unabhängig erledigt, bei uns der `prof-kritiker`.
 - **Testcontainers**: Bibliothek, die für Tests automatisch einen echten Datenbank-Container startet und danach wieder entfernt.
