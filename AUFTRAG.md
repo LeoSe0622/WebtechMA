@@ -19,7 +19,7 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 - Der Seeder füllt bei jedem Start bis zum letzten abgeschlossenen Monat auf (M3).
 - Sandbox-Bereinigung auch beim Start und beim Demo-Login, dazu ein Tageslimit für Demo-Logins (M4, m12).
 
-**Änderungen gegenüber v1.2** (Entscheidung E5): Das Team wird beim Aufbau von Backend und Frontend eingebunden und soll Datenbankanbindung, Datenbankaufrufe und das Zusammenspiel von Frontend und Backend verstehen. Neue Arbeitsregel 15. Prompt 2 hält nach jeder Phase an.
+**Änderungen gegenüber v1.2** (Entscheidung E5): Das Team wird beim Aufbau von Backend und Frontend eingebunden und soll Datenbankanbindung, Datenbankaufrufe und das Zusammenspiel von Frontend und Backend verstehen. Neue Arbeitsregel 15. ~~Prompt 2 hält nach jeder Phase an.~~ (überholt durch v1.4/E7: Halt nur an den Haltepunkten aus Regel 15)
 
 **Änderungen gegenüber v1.3** (Entscheidung E7): Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom. Regel 15 ist angepasst.
 

@@ -40,7 +40,7 @@ Alles andere (Entities, Services, Tests, Migrationen, Layout, CI, Dockerfile, Do
 12. Nach Phase 0, Phase 1, Phase 3 und am Ende prüft der Subagent `prof-kritiker`. Berichte kommen nach `docs/reviews/`.
 13. **Kostenregel:** nur dauerhaft kostenlose Dienste, ohne Testphase und ohne Kreditkarte (AUFTRAG.md, Abschnitt 3).
 14. Nach jeder Phase oder Etappe `docs/lernen/LOGBUCH.md` und `docs/lernen/GLOSSAR.md` ergänzen.
-15. Team einbinden (siehe nächster Abschnitt).
+15. Team einbinden (siehe Abschnitt „Einbindung des Teams“ oben).
 
 ## Datenbank
 
@@ -62,7 +62,7 @@ frontend/               Vue 3, TypeScript, Vite
 
 ## Befehle
 
-Sie funktionieren, sobald die jeweiligen Teile angelegt sind.
+Einmalig: `.env.example` nach `.env` kopieren und `DB_PASSWORD` setzen, im Ordner `frontend` `npm ci` ausführen. Unter PowerShell `npm.cmd` statt `npm` verwenden, falls Skripte blockiert sind (oder einmalig `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`). Unter Windows `.\gradlew.bat` statt `./gradlew`.
 
 | Zweck | Befehl |
 |---|---|
@@ -71,7 +71,8 @@ Sie funktionieren, sobald die jeweiligen Teile angelegt sind.
 | Backend testen | `cd backend; ./gradlew test` |
 | Frontend starten | `cd frontend; npm run dev` |
 | Frontend testen | `cd frontend; npm run test:unit -- --run` |
-| Frontend linten | `cd frontend; npm run lint` |
+| Frontend linten (mit Korrektur) | `cd frontend; npm run lint` |
+| Frontend linten wie in CI | `cd frontend; npm run lint-ci` |
 
 ## Wichtig!
 Bevor du irgendetwas committest oder als erledigt oder fertig anerkennst, überprüfe genau, ob es wirklich stimmt und alles korrekt ist!

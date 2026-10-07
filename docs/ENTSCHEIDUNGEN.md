@@ -35,6 +35,8 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 
 ## E5: Team wird in die Entwicklung eingebunden
 
+- **Status:** Teilweise ersetzt durch E7. Prompt 2 hält **nicht** mehr nach jeder Phase an, sondern nur noch an den Haltepunkten aus AUFTRAG.md, Regel 15.
+
 - **Datum:** 07.10.2026
 - **Entscheidung:** Beim Aufbau von Backend und Frontend wird das Team in jedem Prompt eingebunden (AUFTRAG.md Regel 15, CLAUDE.md „Einbindung des Teams“). Schwerpunkte: Datenbankanbindung, Datenbankaufrufe, Zusammenspiel von Frontend und Backend. Prompt 2 hält nach jeder Phase für eine Erklärung an.
 - **Grund:** Das Team muss Demo und Papierklausur bestehen und will den Code nicht nur erklärt bekommen, sondern beim Entstehen verstehen.
@@ -50,8 +52,27 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 ## E7: Beteiligung des Teams eingegrenzt
 
 - **Datum:** 07.10.2026
-- **Entscheidung:** Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom (AUFTRAG.md v1.4, Regel 15; CLAUDE.md „Einbindung des Teams“). Präzisiert E5.
+- **Entscheidung:** Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom (AUFTRAG.md v1.4, Regel 15; CLAUDE.md „Einbindung des Teams“). Ersetzt den Halt nach jeder Phase aus E5.
 - **Grund:** Wunsch des Teams. Die Zeit soll in die Stellen fließen, die das Zusammenspiel der Teile zeigen, und in die Abnahme der Ergebnisse.
 - **Folge:** Im LOGBUCH werden die autonom gebauten Teile besonders gründlich erklärt, damit Prompt 3 sie für Demo und Klausur aufbereiten kann.
 - **Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) beim Team bleibt, wird spätestens bei der Abnahme von M2 entschieden.
 - **Verworfene Alternative:** Beteiligung an allen Spring- und Vue-Teilen (E5 in der ursprünglichen Form).
+
+## E8: Umgang mit Review 01 (Gerüst)
+
+- **Datum:** 07.10.2026
+- **Behoben:**
+  - M1: CORS erlaubt jetzt auch `PUT`, mit Preflight-Test (`CorsConfigTest.answersPreflightForPut`). Für Phase 2 vorgemerkt: In der `SecurityFilterChain` `http.cors(Customizer.withDefaults())` setzen und den Preflight mit `Access-Control-Request-Headers: Authorization` testen.
+  - M2: E5 als teilweise ersetzt markiert, E7 und der Vermerk zu v1.3 angeglichen.
+  - m1: `ListItemIntegrationTest` liest mit Testcontainers wirklich aus Postgres und prüft Reihenfolge und DTO-Abbildung.
+  - m2: CI nutzt `npm run lint-ci` (ohne `--fix`).
+  - m3: Das Dev-Profil erlaubt `FRONTEND_URL` und zusätzlich `localhost:5173`.
+  - m5: `ListItem` mit `FetchType.LAZY`, primitiven `int`/`boolean`, `createdAt` als Konstruktor-Parameter.
+  - m6: `App.spec.ts` mit Attrappe statt echtem fetch.
+  - m8: `@tsconfig/node26` und `@types/node` 26.
+  - m10: Verweise und Einrichtungshinweise in CLAUDE.md und DATENBANK.md korrigiert.
+  - m11: Prompt-Dateien in `.gitignore`. Sie sind Arbeitsanweisungen für Claude, kein Projektbestandteil.
+- **Festgehalten (M4):** An der Frontend-Backend-Verbindung hat das Team `CorsConfig.addCorsMappings` selbst geschrieben und die übrigen TODOs ausdrücklich an Claude übergeben („mach doch alle selbst“). Das ist eine bewusste Abweichung von Regel 15 (a) auf Wunsch des Teams. Empfehlung an das Team: Die zweite Person committet künftig selbst, damit der Anteil beider sichtbar ist.
+- **Für Phase 2 vorgemerkt (m4):** V3 legt zuerst `app_user` an, fügt `owner_id` nullable hinzu, löscht die vorhandenen Testzeilen in `list_item` (lokal nur Testdaten, auf Neon und in Testcontainers ist die Tabelle leer), setzt dann `NOT NULL` und einen Index auf `owner_id`.
+- **Zurückgestellt:** m7 (Prüfung von `VITE_API_BASE_URL`) kommt mit dem zentralen API-Client in Phase 2 und als Stolperstelle in DEPLOY.md. m9 (Abhaken speichern) kommt mit Phase 3. m12 ist kosmetisch und in V2 nicht mehr änderbar, ab V3 wird `CREATE TABLE` großgeschrieben.
+- **Offen (M3):** Entscheidung zu AUFTRAG.md, Abschnitt 18, siehe E9.

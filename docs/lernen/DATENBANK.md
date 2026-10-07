@@ -63,7 +63,7 @@ docker exec korbgeld-db psql -U korbgeld -d korbgeld -c "SELECT * FROM flyway_sc
 | Lebt die Verbindung? | `http://localhost:8080/actuator/health` → `UP` (200) oder `DOWN` (503) |
 | Wer ist verbunden? | `SELECT client_addr, application_name, state, query FROM pg_stat_activity WHERE client_addr IS NOT NULL;` |
 | Welche Migrationen sind gelaufen? | `SELECT installed_rank, version, description, success FROM flyway_schema_history;` |
-| Welches SQL schickt Hibernate? | Backend-Log mit `logging.level.org.hibernate.SQL: debug` (kommt mit Schritt D) |
+| Welches SQL schickt Hibernate? | Backend-Log im Dev-Profil (`application-dev.yml`: `org.hibernate.SQL` und `org.hibernate.orm.jdbc.bind`) |
 | Wie groß ist die Datenbank? (Neon Free: 0,5 GB) | `SELECT pg_size_pretty(pg_database_size('korbgeld'));` |
 | Was macht der Pool? | Backend-Log `HikariPool-1 …` |
 

@@ -6,6 +6,11 @@
 # Datenbank-Sicherungen (enthalten echte Daten)
 backup*.sql
 
+# Prompt-Dateien für Claude Code (liegen nur lokal, siehe ENTSCHEIDUNGEN E8)
+PROMPT-1-LERNEN.md
+PROMPT-3-VERSTEHEN.md
+goal-befehl.txt
+
 # Persönliche Claude-Code-Einstellungen
 .claude/settings.local.json
 

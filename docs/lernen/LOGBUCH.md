@@ -88,3 +88,19 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - Tests: `CorsConfigTest` (erlaubter Origin → Header, fremder Origin → 403), `listItems.spec.ts` (Erfolg, HTTP 500), `ShoppingListView.spec.ts` mit `vi.mock` (Laden, Daten, Abhaken, Fehler, leer).
 - **Konzepte:** Same-Origin-Policy, Origin = Protokoll + Host + Port, CORS-Header `Access-Control-Allow-Origin`, Preflight (`OPTIONS`), `fetch`, Promise, `async`/`await`, `response.ok` (fetch wirft bei 4xx/5xx nicht), `onMounted`, `try`/`catch`/`finally`, Vite-Umgebungsvariablen nur mit Präfix `VITE_`, Attrappen im Frontend (`vi.mock`, `vi.stubGlobal`, `flushPromises`).
 - **Geprüft:** Backend-Tests ohne `.env` (wie in CI): 4/4 grün. Frontend 11/11, Lint und Build fehlerfrei. Echte Instanz auf Port 8081: `localhost:5173` → 200 mit Header, fremder Origin → 403, Preflight für PATCH → erlaubt.
+
+## Etappe 7: GitHub Actions (07.10.2026, autonom)
+
+- **Entstanden:** `.github/workflows/backend.yml` (Temurin 25, `gradle/actions/setup-gradle`, `./gradlew build`) und `.github/workflows/frontend.yml` (Node 26, `npm ci`, Lint, `test:unit -- --run`, Build). Versionen: checkout v7, setup-java v6, setup-node v7, gradle/actions v6.
+- **Konzepte:** Trigger (`on: push / pull_request` mit `paths`-Filter, inklusive der Workflow-Datei selbst), Job, Steps, Runner (`ubuntu-latest`, frische Linux-VM pro Lauf, Docker vorinstalliert, deshalb laufen Testcontainers mit), `working-directory`, Caching (Gradle, npm), `npm ci` statt `npm install` (exakt nach Lockfile).
+- **Geprüft:** Erster Lauf für Commit `e7416ce` auf GitHub: Frontend und Backend `success`.
+
+## Etappe 8: Kritiker-Review des Gerüsts (07.10.2026, autonom)
+
+- **Bericht:** `docs/reviews/01-geruest.md`. Keine Blocker, 4 Major, 12 Minor. Umgang damit in `docs/ENTSCHEIDUNGEN.md` (E8).
+- **Wichtigste Korrekturen:** CORS erlaubt `PUT` (sonst wäre UC1 „Budget speichern“ im Browser am Preflight gescheitert, während curl funktioniert). Neuer `ListItemIntegrationTest` liest mit Testcontainers echt aus Postgres. CI-Lint ohne `--fix`. `ListItem` mit `LAZY`, primitiven Typen und `createdAt` als Parameter. Node-26-Typpakete.
+- **Lektionen:**
+  - Ein Test ohne `Origin`-Header prüft CORS nicht. Erst der Preflight-Test (`OPTIONS` + `Access-Control-Request-Method`) zeigt, ob der Browser darf.
+  - `--fix` in CI versteckt Fehler, weil korrigiert und verworfen wird.
+  - Steuerdokumente müssen sich widerspruchsfrei ersetzen (E5 → E7), sonst arbeitet ein autonomer Lauf nach der falschen Regel.
+- **Stand:** Backend 6 Tests, Frontend 11 Tests, beide Workflows grün. Phase 1 abgeschlossen.
