@@ -1,51 +1,34 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { APP_NAME } from '@/config'
+import { RouterView } from 'vue-router'
+import AppHeader from '@/components/AppHeader.vue'
+import WorkInProgressView from '@/views/WorkInProgressView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useUiStore } from '@/stores/ui'
+
+const auth = useAuthStore()
+const ui = useUiStore()
 </script>
 
 <template>
-  <header class="topbar">
-    <span class="brand">{{ APP_NAME }}</span>
-    <nav>
-      <RouterLink to="/liste">Liste</RouterLink>
-    </nav>
-  </header>
+  <AppHeader v-if="auth.isAuthenticated" />
 
   <main class="content">
-    <!-- Hier zeigt der Router die Komponente zur aktuellen URL an -->
-    <RouterView />
+    <!-- Meldet das Backend 404 oder 501 beim Laden einer Seite, ersetzt diese Ansicht den Inhalt -->
+    <WorkInProgressView
+      v-if="ui.override?.kind === 'wip'"
+      :feature="ui.override.feature"
+      :milestone="ui.override.milestone"
+    />
+    <NotFoundView v-else-if="ui.override?.kind === 'not-found'" />
+    <RouterView v-else />
   </main>
 </template>
 
 <style scoped>
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 12px 16px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-
-.brand {
-  font-family: var(--font-serif);
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-nav a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-nav a.router-link-active {
-  color: var(--accent);
-  font-weight: 600;
-}
-
 .content {
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 24px 16px 96px;
 }
 </style>

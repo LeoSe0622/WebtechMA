@@ -94,3 +94,24 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Grund:** Wunsch des Teams. Das Verständnis entsteht über LOGBUCH, die Abnahme und Prompt 3.
 - **Folge:** Regel 15 (a) ist für Prompt 2 ausgesetzt. Die Milestone-Abnahmen (M3, M4) und die Beteiligung am Ausbau zu M4 (E9) bleiben.
 - **Verworfene Alternative:** Zwei Goal-Läufe mit Halt bei H1/H2.
+
+## E11: Kontraste und zusätzlicher Token `--accent-strong` (Phase 2)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Neuer Token `--accent-strong: #9C4427` für Text, Links und Primär-Buttons. `--accent` (#C96442) bleibt für Rahmen, Fokus und Dekoration.
+- **Grund:** WCAG-AA-Prüfung (Kontrastformel aus WCAG 2.x): `--accent` auf Weiß hat nur 3,90:1, AA verlangt aber 4,5:1 für normalen Text. Gemessen: Text/Hintergrund 15,80, Text/Fläche 16,64, muted/Fläche 5,55, muted/Hintergrund 5,27, accent-strong/Fläche 6,42, Weiß auf accent-strong 6,42, accent-strong auf accent-weak 5,14, ok 5,08, warn 4,87, danger 5,36, Demo-Label 7,71. Alle Paare, die jetzt für Text verwendet werden, bestehen AA.
+- **Verworfene Alternative:** `--accent` für Buttontext auf Weiß, fällt durch AA.
+
+## E12: In-Arbeit- und 404-Ansicht im Frontend (Phase 2)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** wip-Routen verwenden direkt `WorkInProgressView` als Komponente und lesen Feature, Milestone und Aufgaben aus `meta`. Der globale Router-Guard regelt den Login-Schutz. Meldet das Backend beim Laden einer Seite 404 oder 501, setzt `loadPage` einen Eintrag im UI-Store, und `App.vue` zeigt statt der Seite die 404- bzw. In-Arbeit-Ansicht. In allen Fällen bleibt die URL erhalten. Der Router entsteht über `createAppRouter()`, damit jeder Test einen eigenen Router mit eigenem Login-Zustand bekommt.
+- **Grund:** Am einfachsten zu erklären: eine Route, eine Komponente. Der UI-Store vermeidet, dass für 404/501 eine andere URL entsteht.
+- **Verworfene Alternative:** Guard, der für jede wip-Route die Komponente austauscht. Das ist schwerer nachzuvollziehen und bringt keinen Vorteil.
+
+## E13: Seed- und Sandbox-Nutzer ohne Passwort (Phase 2)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** `app_user.password_hash` ist nullable. Seed-Nutzer (Rangliste) und Sandbox-Nutzer (Demo) haben keinen Hash und können sich deshalb nicht per Passwort anmelden. Sandbox-Nutzer erreichen ihre Daten nur über das JWT aus `POST /api/auth/demo`. `ON DELETE CASCADE` an allen `owner_id` sorgt dafür, dass das Löschen alter Sandbox-Nutzer alle ihre Daten mitnimmt.
+- **Grund:** AUFTRAG.md, Abschnitt 11 („können sich nicht einloggen“) und Abschnitt 10 (Bereinigung nach 7 Tagen).
+- **Verworfene Alternative:** Zufallspasswort für Seed-Nutzer. Das ist unnötig und wäre ein Geheimnis, das nirgends gebraucht wird.

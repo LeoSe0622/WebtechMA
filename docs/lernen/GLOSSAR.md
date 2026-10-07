@@ -3,11 +3,14 @@
 Ein Satz pro Begriff, alphabetisch sortiert.
 
 - **API (REST-API)**: Die Schnittstelle des Backends. Das Frontend ruft Adressen wie `GET /api/list-items` auf und bekommt Daten als JSON zurück.
+- **ApiError**: Fehlerklasse im Frontend mit HTTP-Status und ProblemDetail, damit Seiten gezielt auf 401, 404 oder 501 reagieren können.
 - **async / await**: async markiert eine Funktion, die zwischendurch wartet. await wartet auf ein Promise, ohne den Browser zu blockieren.
 - **Auto-Configuration**: Spring Boot richtet Komponenten automatisch ein, wenn ihre Bedingungen erfüllt sind (z. B. Treiber im Klassenpfad → Datenbankverbindung).
+- **BCrypt**: Verfahren, das Passwörter absichtlich langsam und mit Zufallswert (Salt) zu einem Hash verrechnet. Gespeichert wird nur der Hash.
 - **Bean**: Ein Objekt, das Spring erzeugt und verwaltet und per Dependency Injection an andere Klassen übergibt.
 - **CI (Continuous Integration)**: Bei jedem Push baut und testet ein Server automatisch den Code, bei uns GitHub Actions.
 - **CLAUDE.md**: Datei im Repo-Wurzelordner, die Claude Code zu Beginn jeder Session automatisch liest, das Projektgedächtnis.
+- **Clock (injiziert)**: Die aktuelle Zeit kommt als Bean aus Spring statt aus Instant.now(), damit Tests eine feste oder vorgerückte Uhr einsetzen können.
 - **Commit**: Ein gespeicherter Schnappschuss des Projekts mit Nachricht, Autor und Zeitpunkt.
 - **computed**: Vue-Funktion für abgeleitete Werte, die automatisch neu berechnet werden, wenn sich ihre Grundlage ändert.
 - **Container**: Abgeschottete Laufzeitumgebung, in der ein Programm (z. B. Postgres) mit allem läuft, was es braucht, ohne es ins Betriebssystem zu installieren.
@@ -16,6 +19,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Dependency Injection**: Eine Klasse bekommt die Objekte, die sie braucht, über den Konstruktor von Spring übergeben, statt sie selbst mit new zu erzeugen.
 - **Docker Compose**: Beschreibt in `docker-compose.yml`, welche Container mit welchen Einstellungen laufen, und startet sie mit einem Befehl.
 - **Docker Engine**: Der Hintergrunddienst, der Container tatsächlich ausführt. Der Befehl `docker` ist nur die Fernbedienung dafür.
+- **Dockerfile (mehrstufig)**: Bauanleitung für ein Container-Image: Stufe 1 baut mit JDK, Stufe 2 enthält nur die Laufzeit (JRE) und das JAR.
 - **DTO (Data Transfer Object)**: Einfaches Objekt nur für die Übertragung nach außen, damit die interne Entity nicht direkt preisgegeben wird.
 - **Entity**: Java-Klasse mit @Entity, deren Objekte Zeilen einer Datenbanktabelle entsprechen.
 - **.env**: Datei mit Zugangsdaten und Konfigurationswerten, die nur lokal existiert und nie ins Repo gelangt.
@@ -26,13 +30,16 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Inversion of Control**: Nicht der eigene Code ruft das Framework auf, sondern das Framework erzeugt und ruft den eigenen Code auf.
 - **JDBC**: Javas Standardschnittstelle für Datenbankzugriffe. Der Postgres-Treiber implementiert sie.
 - **JSON**: Textformat für Daten (`{"id": 1, "checked": true}`), in dem Frontend und Backend miteinander sprechen.
+- **JWT**: JSON Web Token: signierter Text mit Angaben (Claims) wie Nutzer-ID und Ablaufzeit. Der Server prüft nur die Signatur und muss sich keine Sitzung merken.
 - **Komponente (Vue)**: Wiederverwendbarer Baustein der Oberfläche in einer .vue-Datei mit Logik (script), HTML-Vorlage (template) und Stil (style).
 - **MockMvc / Mockito**: MockMvc simuliert HTTP-Anfragen im Test ohne echten Server. Mockito ersetzt Abhängigkeiten durch Attrappen mit festen Antworten.
 - **N+1-Problem**: Statt einer Abfrage mit JOIN werden für N Einträge N zusätzliche Einzelabfragen geschickt. Wird mit @EntityGraph vermieden.
 - **Neon**: Anbieter für Postgres in der Cloud mit dauerhaft kostenlosem Tarif, bei uns ab M3 für die Produktionsdatenbank.
+- **ON DELETE CASCADE**: Regel am Fremdschlüssel: Wird der Nutzer gelöscht, löscht die Datenbank alle Zeilen, die auf ihn verweisen, automatisch mit.
 - **onMounted**: Vue-Funktion, die Code ausführt, sobald die Komponente im Browser angezeigt wird. Typisch für das erste Laden von Daten.
 - **Pinia**: Zentrale Ablage für Zustand, den mehrere Komponenten teilen (z. B. das Login-Token ab Phase 2).
 - **Preflight**: Vorab-Anfrage (OPTIONS), mit der der Browser bei z. B. PATCH oder DELETE prüft, ob der Server die eigentliche Anfrage erlaubt.
+- **ProblemDetail**: Standardformat für Fehlerantworten (RFC 9457) mit status, title, detail und eigenen Zusatzfeldern wie path oder errors.
 - **Profil (Spring)**: Benannte Konfigurationsvariante, z. B. dev, deren Einstellungen (application-dev.yml) nur gelten, wenn das Profil aktiv ist.
 - **Promise**: Versprechen auf ein späteres Ergebnis einer asynchronen Operation, vergleichbar mit CompletableFuture in Java.
 - **Props / Emits**: Props reichen Daten von der Eltern- an die Kindkomponente weiter. Emits melden Ereignisse vom Kind an die Eltern zurück.
@@ -43,7 +50,11 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Render**: Hosting-Dienst, auf dem Backend und Frontend öffentlich laufen (Modulvorgabe).
 - **Repository (Spring Data)**: Interface, zu dem Spring beim Start die Implementierung mit save, findAll usw. erzeugt. Methodennamen werden zu Abfragen.
 - **Review-Befund (Blocker / Major / Minor)**: Blocker muss sofort behoben werden. Major wird behoben oder begründet zurückgestellt. Minor ist eine Verbesserung ohne Dringlichkeit.
+- **Router-Guard**: Funktion, die Vue Router vor jedem Seitenwechsel aufruft, z. B. um ohne Login zur Startseite umzuleiten.
 - **Same-Origin-Policy**: Schutzregel des Browsers: JavaScript darf Antworten nur von derselben Origin (Protokoll, Host, Port) lesen, außer der Server erlaubt es per CORS.
+- **Sandbox-Nutzer**: Nutzer, den der Demo-Login frisch mit Beispieldaten anlegt. Er ist von allen anderen getrennt und wird nach 7 Tagen gelöscht.
+- **Seeder**: Code, der beim Start fehlende Beispieldaten anlegt, idempotent, also ohne Duplikate bei mehrfachem Lauf.
+- **sessionStorage**: Speicher im Browser pro Tab: Er überlebt das Neuladen der Seite, nicht aber das Schließen des Tabs.
 - **Staging-Bereich**: Zwischenablage von Git. Nur was dort per `git add` liegt, kommt in den nächsten Commit.
 - **Subagent**: Eigene Claude-Instanz mit leerem Kontext und begrenzten Werkzeugen, die eine Teilaufgabe unabhängig erledigt, bei uns der `prof-kritiker`.
 - **Testcontainers**: Bibliothek, die für Tests automatisch einen echten Datenbank-Container startet und danach wieder entfernt.
@@ -53,3 +64,4 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Vue Router**: Ordnet URLs (z. B. /liste) Komponenten zu und tauscht beim Navigieren die Anzeige aus, ohne die Seite neu zu laden.
 - **@WebMvcTest**: Testart, die nur die Web-Schicht (Controller) startet, ohne Datenbank, und schnell HTTP und JSON prüft.
 - **WSL 2**: Windows-Subsystem für Linux. Darin läuft die Docker Engine unter Windows.
+- **Zustandslos (stateless)**: Der Server speichert keine Sitzung. Jede Anfrage bringt alles mit, was er braucht, hier das JWT.

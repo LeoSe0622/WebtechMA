@@ -105,3 +105,23 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - Steuerdokumente müssen sich widerspruchsfrei ersetzen (E5 → E7), sonst arbeitet ein autonomer Lauf nach der falschen Regel.
 - **Stand:** Backend 6 Tests, Frontend 11 Tests, beide Workflows grün. Phase 1 abgeschlossen.
 - **Entscheidung E9:** Den Ausbau zu M4 baut Claude, das Team ist an den Frontend-Backend-Verbindungen beteiligt und nimmt M4 ab. AUFTRAG.md ist jetzt v1.5.
+
+## Phase 2: Querschnitt (07.10.2026, Prompt 2, autonom nach E10)
+
+- **Backend:**
+  - Security: `common/SecurityConfig.java` (zustandslos, CSRF aus, CORS über `http.cors()`, `/api/auth/**` und `/actuator/health` offen, sonst JWT), `common/JwtConfig.java` (HS256-Schlüssel aus `JWT_SECRET`, mindestens 32 Zeichen, sonst Startabbruch), `auth/TokenService.java` (Claim `sub` = Nutzer-ID, 12 Stunden), `common/CurrentUser.java`.
+  - Login: `auth/AuthController.java` mit `POST /api/auth/register|login|demo` und `GET /api/me`, `auth/AuthService.java` (BCrypt), `auth/AuthDtos.java` (Records mit Bean Validation).
+  - Demo: `auth/SandboxService.java` (Tageslimit 429, Löschen nach 7 Tagen beim Start, bei jedem Demo-Login und täglich um 4 Uhr), `common/seed/DemoPersona.java` („Mia“ mit 12 Monaten Historie, Vorrat, Liste, Gewohnheiten).
+  - Schema: `V3__create_app_user_and_owner.sql` (Altdaten aus Phase 1 gelöscht, wie in E8 geplant), `V4__create_core_tables.sql`. Entities für alle Tabellen aus AUFTRAG.md, Abschnitt 6. `PurchaseLine` als `@Embeddable` in einer `@ElementCollection`, `PricePoint` mit `@EmbeddedId`, `YearMonthConverter`.
+  - Fehler: `common/error/ApiExceptionHandler.java` liefert jede Ausnahme als ProblemDetail (404 mit `path`, 501 mit `feature`/`milestone`, 400 mit `errors`, 409, 429, 502). `common/WorkInProgressController.java` antwortet für Rezepte, Preisvergleich und Profil mit 501.
+  - Seeder: `common/seed/DataSeeder.java` ruft `ProductCatalog` (40 Produkte ohne Barcode), `PriceSeeder` (`seed/prices.csv`, als SYNTHETISCH markiert) und `LeaderboardSeeder` (15 Nutzer, füllt fehlende Monate mit `Clock` auf).
+  - `backend/Dockerfile` (mehrstufig, Temurin 25, `MaxRAMPercentage=75`), lokal erfolgreich gebaut.
+  - Tests: 14, u. a. Datentrennung beim Lesen, Demo-Login mit Mia-Daten, Registrierung und Login (409, 401, 400 mit Feldfehlern), 501 und 404 als ProblemDetail, Preflight ohne Token, Tageslimit 429, Seeder mit vorgerückter Uhr.
+- **Frontend:**
+  - `src/api/client.ts`: `apiRequest` (JWT-Header, `ApiError` mit ProblemDetail, 401 → abmelden und zur Startseite), `loadPage` (404 → 404-Ansicht, 501 → In-Arbeit-Ansicht, URL bleibt).
+  - `src/stores/auth.ts` (Token in Pinia und sessionStorage), `src/stores/ui.ts` (Ersetzung durch 404/501).
+  - `src/router/index.ts`: `meta.status`, `feature`, `milestone`, `tasks`, globaler Guard für den Login, Catch-all für 404, `createAppRouter()`.
+  - Ansichten: `StartView` (Demo, Anmelden, Registrieren mit Haushaltsgröße und Opt-in), `WorkInProgressView` und `NotFoundView` im Stil einer GitHub-Issue-Karte (`IssueCard`), `AppHeader` mit Navigation, Status-Labels und Kontomenü.
+  - Design: Tokens plus `--accent-strong` (E11), Source Serif 4 über Google Fonts, Buttons und Felder mit 44 px, `prefers-reduced-motion`.
+  - Tests: 20, u. a. Token im Header, 401 meldet ab, Barcode-404 ohne Weiterleitung, `loadPage` bei 404/501, wip-Route, unbekannter Pfad, Login-Schutz, Demo-Login.
+- **Konzepte:** JWT (Header, Claims, Signatur), zustandslose Authentifizierung, BCrypt, `@AuthenticationPrincipal`, Resource Server, ProblemDetail (RFC 9457), `@RestControllerAdvice`, `ON DELETE CASCADE`, `@ElementCollection`/`@Embeddable`, `@EmbeddedId`, `AttributeConverter`, `ApplicationRunner`, `@Scheduled`, injizierte `Clock`, mehrstufiges Dockerfile, Pinia-Store, sessionStorage, Router-Guard, Route-Meta.
