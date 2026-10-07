@@ -1,8 +1,8 @@
 # Nur lokal aktiv (bootRun setzt das Profil "dev"), nicht auf Render
 app:
   cors:
-    # Der Vite-Entwicklungsserver
-    allowed-origins: http://localhost:5173
+    # FRONTEND_URL und zusätzlich der Vite-Entwicklungsserver (AUFTRAG.md, Abschnitt 10)
+    allowed-origins: ${FRONTEND_URL:http://localhost:5173},http://localhost:5173
 
 logging:
   level:

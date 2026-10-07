@@ -27,6 +27,7 @@ jobs:
 
       # Installiert exakt die Versionen aus package-lock.json
       - run: npm ci
-      - run: npm run lint
+      # Ohne --fix, damit Verstöße den Lauf rot machen
+      - run: npm run lint-ci
       - run: npm run test:unit -- --run
       - run: npm run build

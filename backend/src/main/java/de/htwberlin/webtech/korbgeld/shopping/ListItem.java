@@ -3,6 +3,7 @@ package de.htwberlin.webtech.korbgeld.shopping;
 import de.htwberlin.webtech.korbgeld.product.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,15 +19,16 @@ public class ListItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    // LAZY: Produkt erst laden, wenn es gebraucht wird; das Repository holt es per @EntityGraph mit
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private int quantity;
 
     @Column(nullable = false)
-    private Boolean checked;
+    private boolean checked;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -35,11 +37,12 @@ public class ListItem {
         // für JPA
     }
 
-    public ListItem(Product product, int quantity) {
+    // createdAt als Parameter, damit Service (Clock) und Seeder (vergangene Monate) ihn bestimmen
+    public ListItem(Product product, int quantity, Instant createdAt) {
         this.product = product;
         this.quantity = quantity;
         this.checked = false;
-        this.createdAt = Instant.now();
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -50,11 +53,11 @@ public class ListItem {
         return product;
     }
 
-    public Integer getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public Boolean getChecked() {
+    public boolean isChecked() {
         return checked;
     }
 

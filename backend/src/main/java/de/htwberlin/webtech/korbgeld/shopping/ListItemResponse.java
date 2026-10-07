@@ -17,7 +17,7 @@ public record ListItemResponse(
                 item.getProduct().getId(),
                 item.getProduct().getName(),
                 item.getQuantity(),
-                item.getChecked(),
+                item.isChecked(),
                 item.getCreatedAt()
         );
     }
