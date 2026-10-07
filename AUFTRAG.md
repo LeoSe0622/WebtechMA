@@ -1,6 +1,6 @@
 # Auftrag: Machbarkeitsbeweis „Korbgeld“
 
-Version 1.4 · 07.10.2026
+Version 1.5 · 07.10.2026
 
 Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prompts umgesetzt:
 
@@ -23,6 +23,8 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 
 **Änderungen gegenüber v1.3** (Entscheidung E7): Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom. Regel 15 ist angepasst.
 
+**Änderungen gegenüber v1.4** (Entscheidungen E8, E9): Den Ausbau zu M4 (Abschnitt 18) baut Claude, das Team ist dabei an den Frontend-Backend-Verbindungen beteiligt und nimmt M4 ab. CORS erlaubt auch `PUT`.
+
 ## 0. Platzhalter
 
 | Platzhalter | Wert | Falls nicht ersetzt |
@@ -39,7 +41,7 @@ Der App-Name steht an genau einer Stelle pro Teil (Backend-Konfiguration, Fronte
 Am Ende von Prompt 2 steht eine lokal lauffähige, durchklickbare Vorversion:
 
 - **Kern-Kette echt:** Budget, Einkaufsliste mit Barcode-Scan, Einkauf abschließen, Vorrat und Dashboard speichern in Postgres und sind getestet.
-- **Demo-Bereiche:** Gewohnheiten, Rangliste und Sparplan zeigen echte Seed-Daten über GET-Endpunkte, schreiben aber nichts. Den echten Ausbau zu M4 übernimmt das Team selbst (Abschnitt 18).
+- **Demo-Bereiche:** Gewohnheiten, Rangliste und Sparplan zeigen echte Seed-Daten über GET-Endpunkte, schreiben aber nichts. Den echten Ausbau zu M4 baut Claude nach Prompt 2 (Abschnitt 18).
 - **In Arbeit:** Rezepte, Preisvergleich und Profil zeigen automatisch die In-Arbeit-Seite.
 - **Unbekannte Pfade** zeigen automatisch die 404-Seite.
 
@@ -190,7 +192,7 @@ Stub-Controller für `/api/recipes/**`, `/api/price-comparison/**` und `/api/pro
 | `/vorrat` | Vorrat, Menge ändern, verbrauchen, Ablauf | ready | UC5 | – |
 | `/gewohnheiten` | Gewohnheiten | demo | UC3 | M4 · 13. Dez. |
 | `/rangliste` | Rangliste | demo | UC6 | M4 · 13. Dez. |
-| `/sparplan` | Musterportfolios mit Gewichtung und Pflichthinweis. Risikoprofil, Rechner und Diagramm folgen zu M4 (Team). | demo | UC7 | M4 · 13. Dez. |
+| `/sparplan` | Musterportfolios mit Gewichtung und Pflichthinweis. Risikoprofil, Rechner und Diagramm folgen zu M4 (Abschnitt 18). | demo | UC7 | M4 · 13. Dez. |
 | `/rezepte` | Rezepte aus dem Vorrat | wip | Erweiterung | nach M4 |
 | `/preise` | Preisvergleich mit Open Prices | wip | Erweiterung | nach M4 |
 | `/profil` | Profil und Einstellungen | wip | – | M4 · 13. Dez. |
@@ -205,7 +207,7 @@ Stub-Controller für `/api/recipes/**`, `/api/price-comparison/**` und `/api/pro
 - `GET pantry-items`, `PATCH pantry-items/{id}`, `POST pantry-items/{id}/consume`
 - `GET habits` (demo), `GET leaderboard` (demo)
 - `GET invest/portfolios`
-- erst zu M4 durch das Team (Abschnitt 18): `PUT invest/risk-profile`, `GET invest/savings-plan`, schreibende Endpunkte für Gewohnheiten und Profil
+- erst zu M4 (Abschnitt 18, nicht in Prompt 2): `PUT invest/risk-profile`, `GET invest/savings-plan`, schreibende Endpunkte für Gewohnheiten und Profil
 - Stubs mit 501: `recipes/**`, `price-comparison/**`, `profile/**`
 
 ## 10. Sicherheit (ab Phase 2)
@@ -224,12 +226,12 @@ Alle Daten werden **relativ zum aktuellen Datum** erzeugt, damit Rangliste und S
 - **Produktkatalog:** etwa 40 typische deutsche Supermarktprodukte ohne Barcode (Barcodes nicht erfinden).
 - **Persona-Vorlage „Mia“:** Studentin in einer WG, Haushalt 1, Budget 260 € pro Monat. 12 Monate Historie mit je 3–6 Einkäufen in 3 Läden. Sparquoten zwischen 0 und 25 %, ein Monat über Budget. Im laufenden Monat: Budget gesetzt, 2 Einkäufe, Liste mit 6 Einträgen (2 davon schon im Vorrat, damit die Warnung sichtbar ist), Vorrat mit 12 Einträgen (2 laufen in ≤ 3 Tagen ab, 1 ist abgelaufen), 4 Gewohnheiten.
 - **Rangliste:** 15 feste Seed-Nutzer mit Pseudonymen (z. B. „Sparfuchs Kreuzberg“), Haushalt 1–4, je 6 abgeschlossene Monate. Sie können sich nicht einloggen.
-- **Kurse:** monatliche Schlusskurse von ACWI und AGG für mindestens 10 Jahre in `backend/src/main/resources/seed/prices.csv`. Prompt 2 erzeugt plausible synthetische Kurse, markiert die Datei im Kopf als „SYNTHETISCH“ und notiert das in ENTSCHEIDUNGEN.md. Echte Kurse über Twelve Data holt das Team zu M4 (Abschnitt 18).
+- **Kurse:** monatliche Schlusskurse von ACWI und AGG für mindestens 10 Jahre in `backend/src/main/resources/seed/prices.csv`. Prompt 2 erzeugt plausible synthetische Kurse, markiert die Datei im Kopf als „SYNTHETISCH“ und notiert das in ENTSCHEIDUNGEN.md. Echte Kurse über Twelve Data kommen zu M4 (Abschnitt 18).
 
 ## 12. Externe APIs
 
 - **Open Food Facts:** `GET https://world.openfoodfacts.org/api/v2/product/{barcode}.json?fields=product_name,product_name_de,image_front_small_url,nutriscore_grade,categories_tags`. Nur über das Backend, mit eigenem `User-Agent` („Korbgeld/0.1 (HTW Berlin Studienprojekt)“) und 3 Sekunden Timeout. Erst in der eigenen Datenbank nachsehen, dann extern fragen, das Ergebnis als `Product` speichern. Unbekannte Barcodes ergeben 404, Ausfall ergibt 502.
-- **Twelve Data (optional, Team zu M4):** `TwelveDataClient` mit Key aus `TWELVEDATA_API_KEY`. Beim Start, wenn ein Key vorhanden ist und der neueste `PricePoint` älter als 35 Tage ist, werden die Monatskurse aktualisiert. Ohne Key oder bei Fehlern läuft alles mit den Seed-Kursen weiter, mit einem Log-Eintrag.
+- **Twelve Data (optional, zu M4, Abschnitt 18):** `TwelveDataClient` mit Key aus `TWELVEDATA_API_KEY`. Beim Start, wenn ein Key vorhanden ist und der neueste `PricePoint` älter als 35 Tage ist, werden die Monatskurse aktualisiert. Ohne Key oder bei Fehlern läuft alles mit den Seed-Kursen weiter, mit einem Log-Eintrag.
 - **Barcode-Scan im Browser:** `@zxing/browser` über die Kamera. Das funktioniert nur unter HTTPS oder localhost. Ein Eingabefeld für die Barcode-Nummer ist immer da.
 
 ## 13. Tests (Mindestumfang am Ende von Prompt 2)
@@ -286,7 +288,7 @@ Spring Security mit JWT und Demo-Login (Abschnitt 10), `owner`-Spalten per neuer
 UC1 Budget, UC2 Liste mit Barcode und Vorrats-Warnung, UC4 Einkauf abschließen, UC5 Vorrat, Dashboard. Integrationstest der ganzen Kette. Danach Kritiker, Bericht als `docs/reviews/02-kern.md`, Blocker beheben. Commit.
 
 **Phase 4: Demo-Bereiche (Prompt 2)**
-Nur lesende Demo-Bereiche: UC3 Gewohnheiten (`GET habits`), UC6 Rangliste (`GET leaderboard` mit Sortierung nach Abschnitt 7) und UC7 Sparplan-Seite mit Musterportfolios (`GET invest/portfolios`) und Pflichthinweis. Kein Rechner, kein Risikoprofil, kein `TwelveDataClient`, kein Diagramm, denn diese Teile baut das Team (Abschnitt 18). Schreibende Buttons sind deaktiviert mit Tooltip „Kommt mit Milestone M4“. Tests. Commit.
+Nur lesende Demo-Bereiche: UC3 Gewohnheiten (`GET habits`), UC6 Rangliste (`GET leaderboard` mit Sortierung nach Abschnitt 7) und UC7 Sparplan-Seite mit Musterportfolios (`GET invest/portfolios`) und Pflichthinweis. Kein Rechner, kein Risikoprofil, kein `TwelveDataClient`, kein Diagramm, denn diese Teile folgen zu M4 (Abschnitt 18). Schreibende Buttons sind deaktiviert mit Tooltip „Kommt mit Milestone M4“. Tests. Commit.
 
 **Phase 5: Abschluss (Prompt 2)**
 1. Stubs und `wip`-Routen prüfen.
@@ -304,9 +306,9 @@ Nur lesende Demo-Bereiche: UC3 Gewohnheiten (`GET habits`), UC6 Rangliste (`GET 
 - Nächste Schritte entlang der Milestones: M2 8. Nov., M3 22. Nov. (Deployment auf Render), M4 13. Dez., Abgabe 17. Jan., 23:59 Uhr
 - Die „Fragen, die ich in der Demo stellen würde“ aus dem letzten Kritiker-Bericht
 
-## 18. Ausbau bis M4 durch das Team (nicht Teil von Prompt 2)
+## 18. Ausbau bis M4 (nach Prompt 2, nicht Teil von Prompt 2)
 
-Diese Teile schreibt das Team selbst, mit interaktiver Begleitung wie in Prompt 1. Prompt 2 baut sie **nicht**. Ziel: Danach funktionieren mindestens 7 Use Cases von Anfang bis Ende, und das Team kennt jede Zeile davon.
+Diese Teile baut Claude nach Prompt 2 (E9). Das Team ist nach Regel 15 an den Frontend-Backend-Verbindungen beteiligt (genaue `TODO(human)`, z. B. API-Aufrufe für Risikoprofil, Sparplan und Gewohnheiten) und nimmt M4 ab. Prompt 2 baut sie **nicht**. Ziel: Danach funktionieren mindestens 7 Use Cases von Anfang bis Ende, und das Team kennt jede Zeile davon.
 
 | Use Case | Was echt wird | Tests |
 |---|---|---|

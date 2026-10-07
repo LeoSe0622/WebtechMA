@@ -14,6 +14,8 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 
 ## E2: Arbeitsteilung zwischen Prompt 2 und Team (Review 00, M1 und M5)
 
+- **Status:** Die Verkleinerung von Prompt 2 gilt weiter. Wer den Ausbau zu M4 baut, regelt jetzt E9 (Claude statt Team).
+
 - **Datum:** 07.10.2026
 - **Entscheidung:** Prompt 2 baut Querschnitt und Kern-Kette (UC1, UC2, UC4, UC5) autonom, die Demo-Bereiche nur lesend. Rechner, Risikoprofil, Diagramm, Twelve Data und die schreibenden Teile von UC3, UC6, UC7 und Profil baut das Team bis M4 selbst (AUFTRAG.md, Abschnitt 18).
 - **Grund:** Das Team muss in der Klausur jede Zeile erklären. Code, den es selbst schreibt, versteht es besser, und es entstehen echte Use Cases, die für die 1,0 zählen, statt reiner Demo-Ansichten.
@@ -55,7 +57,7 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Entscheidung:** Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom (AUFTRAG.md v1.4, Regel 15; CLAUDE.md „Einbindung des Teams“). Ersetzt den Halt nach jeder Phase aus E5.
 - **Grund:** Wunsch des Teams. Die Zeit soll in die Stellen fließen, die das Zusammenspiel der Teile zeigen, und in die Abnahme der Ergebnisse.
 - **Folge:** Im LOGBUCH werden die autonom gebauten Teile besonders gründlich erklärt, damit Prompt 3 sie für Demo und Klausur aufbereiten kann.
-- **Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) beim Team bleibt, wird spätestens bei der Abnahme von M2 entschieden.
+- **Erledigt:** Die Frage zum Ausbau zu M4 ist in E9 entschieden.
 - **Verworfene Alternative:** Beteiligung an allen Spring- und Vue-Teilen (E5 in der ursprünglichen Form).
 
 ## E8: Umgang mit Review 01 (Gerüst)
@@ -75,4 +77,12 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Festgehalten (M4):** An der Frontend-Backend-Verbindung hat das Team `CorsConfig.addCorsMappings` selbst geschrieben und die übrigen TODOs ausdrücklich an Claude übergeben („mach doch alle selbst“). Das ist eine bewusste Abweichung von Regel 15 (a) auf Wunsch des Teams. Empfehlung an das Team: Die zweite Person committet künftig selbst, damit der Anteil beider sichtbar ist.
 - **Für Phase 2 vorgemerkt (m4):** V3 legt zuerst `app_user` an, fügt `owner_id` nullable hinzu, löscht die vorhandenen Testzeilen in `list_item` (lokal nur Testdaten, auf Neon und in Testcontainers ist die Tabelle leer), setzt dann `NOT NULL` und einen Index auf `owner_id`.
 - **Zurückgestellt:** m7 (Prüfung von `VITE_API_BASE_URL`) kommt mit dem zentralen API-Client in Phase 2 und als Stolperstelle in DEPLOY.md. m9 (Abhaken speichern) kommt mit Phase 3. m12 ist kosmetisch und in V2 nicht mehr änderbar, ab V3 wird `CREATE TABLE` großgeschrieben.
-- **Offen (M3):** Entscheidung zu AUFTRAG.md, Abschnitt 18, siehe E9.
+- **M3:** entschieden in E9.
+
+## E9: Ausbau zu M4 baut Claude (Review 01, M3)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Den Ausbau zu M4 (AUFTRAG.md, Abschnitt 18: Risikoprofil, Sparplan-Rechner, Diagramm, Twelve Data, Gewohnheiten anlegen, Ranglisten-Opt-in, Profil) baut Claude nach Prompt 2. Das Team ist nach Regel 15 an den Frontend-Backend-Verbindungen beteiligt (genaue `TODO(human)`) und nimmt M4 ab.
+- **Grund:** Passt zur Arbeitsweise aus E7. So stehen zu M4 mindestens 7 echte Use Cases, und das Team schreibt die Teile, die das Zusammenspiel zeigen.
+- **Folge:** Prompt 2 bleibt verkleinert (E2): Phase 4 baut nur lesende Demo-Bereiche. Der Ausbau folgt danach als eigener Schritt zu M4.
+- **Verworfene Alternativen:** Das Team schreibt den Ausbau komplett selbst (ursprünglicher Plan aus E2, zu viel Zeit). Claude baut ihn ganz ohne Team-Beteiligung (keine Verbindungsteile vom Team).

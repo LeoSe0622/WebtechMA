@@ -22,7 +22,7 @@ Das Team wird nur an zwei Stellen beteiligt, sonst arbeitet Claude selbstständi
 
 Alles andere (Entities, Services, Tests, Migrationen, Layout, CI, Dockerfile, Doku) baut Claude autonom, ohne `TODO(human)`. Es wird gründlich geprüft (Tests, Build, Gegenprobe) und kurz im LOGBUCH erklärt, damit Prompt 3 darauf aufbauen kann. Datenbankzugriffe werden weiterhin mit SQL-Log nachvollziehbar gemacht (`docs/lernen/DATENBANK.md`).
 
-**Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) weiter vom Team selbst geschrieben wird, entscheidet das Team spätestens bei der Abnahme von M2.
+**Ausbau zu M4 (AUFTRAG.md, Abschnitt 18):** baut Claude nach Prompt 2. Das Team ist an den Frontend-Backend-Verbindungen beteiligt und nimmt M4 ab (E9).
 
 ## Arbeitsregeln (Kurzform von AUFTRAG.md, Abschnitt 2)
 

@@ -104,3 +104,4 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - `--fix` in CI versteckt Fehler, weil korrigiert und verworfen wird.
   - Steuerdokumente müssen sich widerspruchsfrei ersetzen (E5 → E7), sonst arbeitet ein autonomer Lauf nach der falschen Regel.
 - **Stand:** Backend 6 Tests, Frontend 11 Tests, beide Workflows grün. Phase 1 abgeschlossen.
+- **Entscheidung E9:** Den Ausbau zu M4 baut Claude, das Team ist an den Frontend-Backend-Verbindungen beteiligt und nimmt M4 ab. AUFTRAG.md ist jetzt v1.5.
