@@ -1,13 +1,13 @@
 # Auftrag: Machbarkeitsbeweis „Korbgeld“
 
-Version 1.3 · 07.10.2026
+Version 1.4 · 07.10.2026
 
 Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prompts umgesetzt:
 
 | Prompt | Datei | Modus | Inhalt |
 |---|---|---|---|
 | 1 Lernen und Vorbereiten | `PROMPT-1-LERNEN.md` | interaktiv, Output-Stil „Learning“ | Phase 0 und 1 gemeinsam mit dem Team, alles erklärt |
-| 2 Bauen | `goal-befehl.txt` | autonom innerhalb einer Phase, Halt mit Erklärung nach jeder Phase (Regel 15), Output-Stil „Explanatory“ | Phase 2 bis 5 |
+| 2 Bauen | `goal-befehl.txt` | autonom, Halt nur bei Frontend-Backend-Verbindung und Milestone-Abnahmen (Regel 15), Output-Stil „Explanatory“ | Phase 2 bis 5 |
 | 3 Verstehen | `PROMPT-3-VERSTEHEN.md` | interaktiv, Output-Stil „Learning“ | Code-Tour, Prüfungsfragen, Spickzettel |
 
 **Änderungen gegenüber v1.0:** Ablauf in drei Prompts. Neue Kostenregel (Abschnitt 3). Datenbank bei Neon statt bei Render, weil die kostenlose Render-Datenbank nach 30 Tagen gelöscht wird. Kein `render.yaml`-Blueprint mehr, sondern eine manuelle Anleitung `docs/DEPLOY.md`. Lokale Entwicklung geht auch ohne Docker über einen Neon-Branch. Spring Security kommt erst in Phase 2. Neuer Lernordner `docs/lernen/`.
@@ -20,6 +20,8 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 - Sandbox-Bereinigung auch beim Start und beim Demo-Login, dazu ein Tageslimit für Demo-Logins (M4, m12).
 
 **Änderungen gegenüber v1.2** (Entscheidung E5): Das Team wird beim Aufbau von Backend und Frontend eingebunden und soll Datenbankanbindung, Datenbankaufrufe und das Zusammenspiel von Frontend und Backend verstehen. Neue Arbeitsregel 15. Prompt 2 hält nach jeder Phase an.
+
+**Änderungen gegenüber v1.3** (Entscheidung E7): Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom. Regel 15 ist angepasst.
 
 ## 0. Platzhalter
 
@@ -61,7 +63,7 @@ Pflichtvorgaben des Moduls: Spring Boot, Vue.js, Postgres, Deployment auf Render
 12. Rufe den Subagenten `prof-kritiker` (Anhang A) nach Phase 0, nach Phase 1, nach Phase 3 und am Ende auf. Blocker behebst du sofort. Major-Befunde behebst du oder stellst sie begründet in `docs/ENTSCHEIDUNGEN.md` zurück.
 13. Die Kostenregel (Abschnitt 3) ist nicht verhandelbar.
 14. Halte nach jeder Phase in `docs/lernen/LOGBUCH.md` fest, was entstanden ist und welche Konzepte darin vorkommen (mit Dateipfaden). Neue Fachbegriffe kommen mit einem Satz Erklärung in `docs/lernen/GLOSSAR.md`. Prompt 3 baut darauf auf.
-15. **Team einbinden.** Das Team will verstehen, wie Datenbankanbindung und Datenbankaufrufe funktionieren und wie Backend und Frontend zusammenspielen. Deshalb gilt in jedem Prompt: vor dem Bauen den Platz im Request-Weg erklären, tragende Stellen vom Team schreiben lassen (`TODO(human)`), bei Datenbankzugriffen das erzeugte SQL und die Verbindungskette (`.env` → `application.yml` → Hikari → JDBC → Postgres) zeigen und nach dem Bauen einen Request von Anfang bis Ende gemeinsam verfolgen. In Prompt 2 endet jede Phase mit dieser Erklärung, und die nächste Phase beginnt erst nach dem „weiter“ des Teams. Das geht vor Regel 5: Zwischen den Phasen darf und soll Prompt 2 Fragen stellen.
+15. **Team einbinden (E5, E7).** Das Team ist an genau zwei Stellen beteiligt. (a) **Verbindung von Frontend und Backend:** API-Client, CORS, erster Endpunkt-Aufruf aus Vue, Lade- und Fehlerzustände, ab Phase 2 JWT-Header und Weiterleitung von 401/404/501. Dort zuerst den Request-Weg erklären, die tragenden Stellen vom Team schreiben lassen (`TODO(human)`) und danach einen Request gemeinsam verfolgen (DevTools, Backend-Log, SQL-Log, Tabelle). (b) **Milestone-Abnahme bei M1, M2, M3 und M4:** anhalten, das Erreichte zeigen und erklären, das Team startet und prüft selbst, offene Punkte nennen, erst nach dem „weiter“ des Teams fortfahren. Alles andere baut Claude autonom, prüft es gründlich und erklärt es kurz in `docs/lernen/LOGBUCH.md`. Für die Haltepunkte (a) und (b) geht diese Regel vor Regel 5.
 
 ## 3. Kostenregel
 

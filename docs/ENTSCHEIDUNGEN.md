@@ -46,3 +46,12 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Entscheidung:** `docker-compose.yml` und `TestcontainersConfiguration` nutzen `postgres:17`, nicht `latest`.
 - **Grund:** Lokal, in Tests und in der Produktion soll dieselbe Hauptversion laufen. Neon unterstützt Postgres 17. Die Seite mit Neons aktueller Standardversion war beim Anlegen wegen einer technischen Störung nicht abrufbar. **Annahme, bei der Neon-Einrichtung zu M3 prüfen:** Neon-Projekt mit Postgres 17 anlegen.
 - **Verworfene Alternative:** `postgres:latest`. Die Version könnte unbemerkt springen, und lokal würde etwas anderes getestet als in der Produktion läuft.
+
+## E7: Beteiligung des Teams eingegrenzt
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom (AUFTRAG.md v1.4, Regel 15; CLAUDE.md „Einbindung des Teams“). Präzisiert E5.
+- **Grund:** Wunsch des Teams. Die Zeit soll in die Stellen fließen, die das Zusammenspiel der Teile zeigen, und in die Abnahme der Ergebnisse.
+- **Folge:** Im LOGBUCH werden die autonom gebauten Teile besonders gründlich erklärt, damit Prompt 3 sie für Demo und Klausur aufbereiten kann.
+- **Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) beim Team bleibt, wird spätestens bei der Abnahme von M2 entschieden.
+- **Verworfene Alternative:** Beteiligung an allen Spring- und Vue-Teilen (E5 in der ursprünglichen Form).

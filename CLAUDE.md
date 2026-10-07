@@ -6,19 +6,21 @@ Semesterprojekt „Korbgeld“ im Modul Web-Technologien (HTW Berlin). Das volls
 
 - Zweierteam, 3. Semester Wirtschaftsinformatik. Java aus Programmieren 1 und 2 ist bekannt. Spring Boot als Anwendung und Vue.js sind neu.
 - Das Team muss jede Zeile erklären können. Lesbarer, konventioneller Code statt cleverer Abstraktion.
-- Prompt 1 (Lernen) ist interaktiv: Konzepte erklären, bevor sie benutzt werden.
-- In Prompt 1 und beim Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) schreibt das Team Spring- und Vue-Code selbst (`TODO(human)`). Doku, Konfiguration und Git-Commits übernimmt Claude und erklärt sie kurz.
-- Prompt 2 baut die Phasen 2 bis 5 ohne `TODO(human)`, aber nur im verkleinerten Umfang aus AUFTRAG.md. Die Teile aus Abschnitt 18 baut er nicht.
+- Doku, Konfiguration, Git-Commits und alle übrigen Bauarbeiten erledigt Claude selbstständig und hält sie in `docs/lernen/LOGBUCH.md` fest.
 
-## Einbindung des Teams (Wunsch des Teams, E5)
+## Einbindung des Teams (E5, angepasst durch E7)
 
-Das Team will verstehen, **wie die Datenbankanbindung und die Datenbankaufrufe funktionieren** und **wie Backend und Frontend arbeiten und zusammenspielen**. Beim Aufbau von Backend und Frontend wird es in den Entwicklungsprozess eingebunden. Das gilt in jedem Prompt:
+Das Team wird nur an zwei Stellen beteiligt, sonst arbeitet Claude selbstständig:
 
-1. **Vor dem Bauen:** kurz sagen, was als Nächstes entsteht und wie es sich in den Weg Browser → Vue → HTTP → Controller → Service → Repository → JPA/Hibernate → SQL → Postgres einfügt.
-2. **Beim Bauen:** Die tragenden Stellen schreibt das Team selbst (`TODO(human)`), z. B. Entity-Felder, Repository-Methoden, Migration, Controller-Endpunkt, Vue-Template, API-Aufruf.
-3. **Datenbank sichtbar machen:** Bei jedem neuen Datenbankzugriff zeigen, welches SQL Hibernate erzeugt (Log `org.hibernate.SQL` im Dev-Profil), wie die Verbindung entsteht (`.env` → `application.yml` → DataSource/Hikari → JDBC → Postgres) und wie man das Ergebnis per `psql` in der Datenbank nachprüft.
-4. **Nach dem Bauen:** einen Request gemeinsam von Anfang bis Ende verfolgen (Browser-DevTools/Netzwerk, curl, Backend-Log, SQL-Log, Tabelle) und das Ergebnis in `docs/lernen/LOGBUCH.md` festhalten.
-5. **Prompt 2:** Nach jeder Phase (2, 3, 4, 5) anhalten, die neuen Teile mit Schritt 3 und 4 erklären und erst nach dem „weiter“ des Teams die nächste Phase beginnen.
+1. **Verbindung von Frontend und Backend.** Dazu gehört alles, was die beiden Seiten verbindet: API-Client im Frontend (`fetch`, `VITE_API_BASE_URL`), CORS im Backend, der erste Aufruf eines Endpunkts aus Vue, Lade- und Fehlerzustände, ab Phase 2 das JWT im `Authorization`-Header und das Weiterleiten von 401/404/501. Hier gilt:
+   - Vor dem Bauen den Weg Browser → Vue → HTTP → Controller → Service → Repository → JPA/Hibernate → SQL → Postgres erklären.
+   - Die tragenden Stellen schreibt das Team selbst (`TODO(human)`).
+   - Danach einen Request gemeinsam verfolgen: Browser-DevTools (Netzwerk), Backend-Log, SQL-Log, Tabelle.
+2. **Jeder Milestone (M1, M2, M3, M4).** Ist ein Milestone erreicht, hält Claude an und führt eine Milestone-Abnahme durch: zeigen, was entstanden ist und wie es zusammenhängt, das Team startet und prüft es selbst, offene Punkte nennen. Erst nach dem „weiter“ des Teams geht es weiter.
+
+Alles andere (Entities, Services, Tests, Migrationen, Layout, CI, Dockerfile, Doku) baut Claude autonom, ohne `TODO(human)`. Es wird gründlich geprüft (Tests, Build, Gegenprobe) und kurz im LOGBUCH erklärt, damit Prompt 3 darauf aufbauen kann. Datenbankzugriffe werden weiterhin mit SQL-Log nachvollziehbar gemacht (`docs/lernen/DATENBANK.md`).
+
+**Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) weiter vom Team selbst geschrieben wird, entscheidet das Team spätestens bei der Abnahme von M2.
 
 ## Arbeitsregeln (Kurzform von AUFTRAG.md, Abschnitt 2)
 
