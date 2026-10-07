@@ -16,6 +16,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **JSON**: Textformat für Daten (`{"id": 1, "checked": true}`), in dem Frontend und Backend miteinander sprechen.
 - **Neon**: Anbieter für Postgres in der Cloud mit dauerhaft kostenlosem Tarif, bei uns ab M3 für die Produktionsdatenbank.
 - **Push / Remote**: Das Remote ist die Kopie des Repos auf GitHub. `git push` überträgt lokale Commits dorthin.
+- **Review-Befund (Blocker / Major / Minor)**: Blocker muss sofort behoben werden. Major wird behoben oder begründet zurückgestellt. Minor ist eine Verbesserung ohne Dringlichkeit.
 - **Render**: Hosting-Dienst, auf dem Backend und Frontend öffentlich laufen (Modulvorgabe).
 - **Staging-Bereich**: Zwischenablage von Git. Nur was dort per `git add` liegt, kommt in den nächsten Commit.
 - **Subagent**: Eigene Claude-Instanz mit leerem Kontext und begrenzten Werkzeugen, die eine Teilaufgabe unabhängig erledigt, bei uns der `prof-kritiker`.

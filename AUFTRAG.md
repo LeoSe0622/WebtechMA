@@ -1,6 +1,6 @@
 # Auftrag: Machbarkeitsbeweis „Korbgeld“
 
-Version 1.1 · 07.10.2026
+Version 1.2 · 07.10.2026
 
 Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prompts umgesetzt:
 
@@ -11,6 +11,13 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 | 3 Verstehen | `PROMPT-3-VERSTEHEN.md` | interaktiv, Output-Stil „Learning“ | Code-Tour, Prüfungsfragen, Spickzettel |
 
 **Änderungen gegenüber v1.0:** Ablauf in drei Prompts. Neue Kostenregel (Abschnitt 3). Datenbank bei Neon statt bei Render, weil die kostenlose Render-Datenbank nach 30 Tagen gelöscht wird. Kein `render.yaml`-Blueprint mehr, sondern eine manuelle Anleitung `docs/DEPLOY.md`. Lokale Entwicklung geht auch ohne Docker über einen Neon-Branch. Spring Security kommt erst in Phase 2. Neuer Lernordner `docs/lernen/`.
+
+**Änderungen gegenüber v1.1** (nach Review `docs/reviews/00-auftrag.md`, Entscheidungen E1 bis E4):
+- Entwickelt wird nur noch lokal mit Docker. Neon dient ausschließlich als Produktionsdatenbank ab M3, der Neon-Branch für die Entwicklung entfällt (B1).
+- Phase 4 ist verkleinert. Prompt 2 baut nur noch lesende Demo-Bereiche. Sparplan-Rechner, Risikoprofil, `TwelveDataClient`, Diagramm und die schreibenden Teile von UC3, UC6 und UC7 baut das Team bis M4 selbst (neuer Abschnitt 18) (M1, M5).
+- Registrierung mit Haushaltsgröße, Pseudonym und Ranglisten-Opt-in (M2).
+- Der Seeder füllt bei jedem Start bis zum letzten abgeschlossenen Monat auf (M3).
+- Sandbox-Bereinigung auch beim Start und beim Demo-Login, dazu ein Tageslimit für Demo-Logins (M4, m12).
 
 ## 0. Platzhalter
 
@@ -28,7 +35,7 @@ Der App-Name steht an genau einer Stelle pro Teil (Backend-Konfiguration, Fronte
 Am Ende von Prompt 2 steht eine lokal lauffähige, durchklickbare Vorversion:
 
 - **Kern-Kette echt:** Budget, Einkaufsliste mit Barcode-Scan, Einkauf abschließen, Vorrat und Dashboard speichern in Postgres und sind getestet.
-- **Demo-Bereiche:** Gewohnheiten, Rangliste und Sparplan zeigen echte Seed-Daten über GET-Endpunkte, schreiben aber nichts.
+- **Demo-Bereiche:** Gewohnheiten, Rangliste und Sparplan zeigen echte Seed-Daten über GET-Endpunkte, schreiben aber nichts. Den echten Ausbau zu M4 übernimmt das Team selbst (Abschnitt 18).
 - **In Arbeit:** Rezepte, Preisvergleich und Profil zeigen automatisch die In-Arbeit-Seite.
 - **Unbekannte Pfade** zeigen automatisch die 404-Seite.
 
@@ -60,11 +67,11 @@ Alles muss dauerhaft kostenlos sein. Erlaubt sind nur Dienste mit einem unbefris
 | Zweck | Dienst | Bemerkung |
 |---|---|---|
 | Code, Zusammenarbeit, CI | GitHub (Free) mit GitHub Actions | |
-| Datenbank Produktion und Entwicklung | Neon (Free-Plan) | Anmeldung mit GitHub. Datenbank schläft nach 5 Minuten ohne Abfragen und wacht in Sekundenbruchteilen auf. |
+| Datenbank Produktion (ab M3) | Neon (Free-Plan) | Anmeldung mit GitHub. Datenbank schläft nach 5 Minuten ohne Abfragen und wacht in Sekundenbruchteilen auf. Nicht für die Entwicklung (E1). |
 | Hosting Backend und Frontend | Render: kostenloser Web Service und Static Site | Pflicht laut Modul. Dienste von Hand anlegen, kein Blueprint, **keine Render-Datenbank**. |
 | Produktdaten | Open Food Facts | ohne Konto und ohne Key |
 | Kursdaten | Twelve Data, Basic-Tarif | optional. Ohne Key läuft alles mit Seed-Kursen. |
-| Lokal | Docker Desktop (optional), Playwright, Google Fonts | |
+| Lokal | Docker Desktop (Pflicht für Entwicklung und Testcontainers), Playwright, Google Fonts | |
 
 Würde ein Schritt Bezahlung, eine Testphase oder eine Kreditkarte verlangen, führst du ihn nicht aus, dokumentierst das in ENTSCHEIDUNGEN.md und nimmst eine Alternative aus dieser Tabelle.
 
@@ -89,7 +96,7 @@ Würde ein Schritt Bezahlung, eine Testphase oder eine Kreditkarte verlangen, f�
 
 **Frontend:** Node 26.x, Vue 3 mit TypeScript und Vite (erzeugt mit `create-vue`), Vue Router im History-Modus, Pinia, Vitest mit `@vue/test-utils` und jsdom, ESLint. `vue-chartjs` mit Chart.js für Diagramme, `@zxing/browser` für den Barcode-Scan. Kein UI-Framework, eigenes CSS mit Design-Tokens.
 
-**Datenbank lokal:** Wer Docker hat, nutzt `docker-compose.yml` mit Postgres (gleiche Major-Version wie Neon, Wahl in ENTSCHEIDUNGEN.md). Wer kein Docker hat, nutzt einen eigenen Neon-Branch `dev-<name>`. Produktion nutzt den Neon-Branch `main`. Verbindung immer über den direkten Neon-Host (ohne `-pooler` im Namen), weil Flyway mit dem Transaktions-Pooler Probleme bekommt. Hikari mit kleinem Pool (maximal 5 Verbindungen) und kurzer `max-lifetime`, weil Neon Verbindungen beim Einschlafen trennt.
+**Datenbank lokal:** Entwickelt wird mit `docker-compose.yml` und Postgres (gleiche Major-Version wie Neon, Wahl in ENTSCHEIDUNGEN.md). Ein Neon-Branch für die Entwicklung ist nicht vorgesehen (E1). Produktion nutzt ab M3 den Neon-Branch `main`. Verbindung immer über den direkten Neon-Host (ohne `-pooler` im Namen), weil Flyway mit dem Transaktions-Pooler Probleme bekommt. Hikari mit kleinem Pool (maximal 5 Verbindungen) und kurzer `max-lifetime`, weil Neon Verbindungen beim Einschlafen trennt.
 
 **Konfiguration:** Eine `.env` im Repo-Wurzelordner (gitignored) und eine vollständige `.env.example` mit `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SSLMODE` (lokal `disable`, Neon `require`), `JWT_SECRET`, `FRONTEND_URL`, `TWELVEDATA_API_KEY`, `VITE_API_BASE_URL`. Das Backend liest sie über `spring.config.import: optional:file:../.env[.properties]`, Vite über `envDir: '..'`, Docker Compose automatisch. `application.yml` enthält nur `${…}`-Platzhalter, die Datasource-URL lautet `jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}`, und `server.port` ist `${PORT:8080}`, weil Render den Port vorgibt.
 
@@ -151,6 +158,7 @@ In Phase 1 gibt es `owner` noch nicht, weil es noch keine Nutzer gibt. Phase 2 e
 | Validierungsfehler | 400 | `errors` (Feld, Meldung) |
 | `BudgetLockedException`, Obergrenze überschritten | 409 | |
 | Externe API nicht erreichbar | 502 | `source` |
+| `DemoLimitReachedException` | 429 | |
 
 Stub-Controller für `/api/recipes/**`, `/api/price-comparison/**` und `/api/profile/**` werfen `FeatureNotAvailableException`.
 
@@ -177,7 +185,7 @@ Stub-Controller für `/api/recipes/**`, `/api/price-comparison/**` und `/api/pro
 | `/vorrat` | Vorrat, Menge ändern, verbrauchen, Ablauf | ready | UC5 | – |
 | `/gewohnheiten` | Gewohnheiten | demo | UC3 | M4 · 13. Dez. |
 | `/rangliste` | Rangliste | demo | UC6 | M4 · 13. Dez. |
-| `/sparplan` | Risikoprofil, Musterportfolio, Sparplan-Diagramm | demo | UC7 | M4 · 13. Dez. |
+| `/sparplan` | Musterportfolios mit Gewichtung und Pflichthinweis. Risikoprofil, Rechner und Diagramm folgen zu M4 (Team). | demo | UC7 | M4 · 13. Dez. |
 | `/rezepte` | Rezepte aus dem Vorrat | wip | Erweiterung | nach M4 |
 | `/preise` | Preisvergleich mit Open Prices | wip | Erweiterung | nach M4 |
 | `/profil` | Profil und Einstellungen | wip | – | M4 · 13. Dez. |
@@ -191,46 +199,48 @@ Stub-Controller für `/api/recipes/**`, `/api/price-comparison/**` und `/api/pro
 - `POST purchases`, `GET purchases?month=`
 - `GET pantry-items`, `PATCH pantry-items/{id}`, `POST pantry-items/{id}/consume`
 - `GET habits` (demo), `GET leaderboard` (demo)
-- `GET invest/portfolios`, `POST invest/risk-profile` (berechnet nur, speichert nichts), `GET invest/savings-plan?portfolio=`
+- `GET invest/portfolios`
+- erst zu M4 durch das Team (Abschnitt 18): `PUT invest/risk-profile`, `GET invest/savings-plan`, schreibende Endpunkte für Gewohnheiten und Profil
 - Stubs mit 501: `recipes/**`, `price-comparison/**`, `profile/**`
 
 ## 10. Sicherheit (ab Phase 2)
 
 - Passwörter mit BCrypt. Login und Registrierung liefern ein JWT (HS256, Secret aus `JWT_SECRET`, mindestens 32 Byte, Laufzeit 12 Stunden). Frontend und Backend laufen auf Render unter verschiedenen Domains, deshalb Token im `Authorization`-Header statt Cookie. Das Frontend hält das Token in Pinia und `sessionStorage`.
+- **Registrierung:** `POST auth/register` erwartet `username` (3–30 Zeichen, unique), `password` (mindestens 8 Zeichen), `displayName` (Pseudonym, 3–40 Zeichen), `householdSize` (1–6, Standard 1) und `leaderboardOptIn` (Standard `false`). Das Formular auf `/` fragt alle Felder ab. Damit sind Budget-Obergrenze und Rangliste für echte Nutzer definiert.
 - CORS erlaubt nur `FRONTEND_URL`, im Dev-Profil zusätzlich `http://localhost:5173`.
 - Jede Abfrage ist auf den Owner beschränkt. Ein Integrationstest beweist, dass Nutzer B die Listeneinträge von Nutzer A weder lesen noch ändern kann.
-- **Demo-Login:** `POST /api/auth/demo` legt aus der Persona-Vorlage (Abschnitt 11) einen frischen Sandbox-Nutzer an und liefert dessen JWT. So kann jeder Prüfer alles ausprobieren, ohne andere zu stören. Ein `@Scheduled`-Job löscht täglich Sandbox-Nutzer, die älter als 7 Tage sind. Das hält die Neon-Datenbank klein (Free-Plan: 0,5 GB).
+- **Demo-Login:** `POST /api/auth/demo` legt aus der Persona-Vorlage (Abschnitt 11) einen frischen Sandbox-Nutzer an und liefert dessen JWT. So kann jeder Prüfer alles ausprobieren, ohne andere zu stören. Sandbox-Nutzer, die älter als 7 Tage sind, werden gelöscht: beim Start der App, bei jedem `POST auth/demo` und zusätzlich durch einen täglichen `@Scheduled`-Job. Der Job allein genügt nicht, weil der kostenlose Render-Dienst einschläft. Pro Kalendertag sind höchstens 100 neue Sandbox-Nutzer erlaubt (konfigurierbar als `app.demo.max-per-day`). Darüber antwortet die API mit 429. Das hält die Neon-Datenbank klein (Free-Plan: 0,5 GB).
 - Das Test-Profil darf ein offensichtliches Dummy-Secret enthalten, mit Kommentar „nur für Tests“. Sonst steht kein Secret im Repo.
 
 ## 11. Seed- und Demo-Daten
 
-Alle Daten werden **relativ zum aktuellen Datum** erzeugt, damit Rangliste und Sparplan auch im Januar noch frische Monate zeigen. Flyway legt das Schema an. Ein idempotenter `ApplicationRunner` ergänzt fehlende Demo-Daten.
+Alle Daten werden **relativ zum aktuellen Datum** erzeugt, damit Rangliste und Sparplan auch im Januar noch frische Monate zeigen. Flyway legt das Schema an. Ein idempotenter `ApplicationRunner` ergänzt fehlende Demo-Daten. Er füllt **bei jedem Start** die Historie der Seed-Nutzer und der Persona-Vorlage bis zum letzten abgeschlossenen Monat auf. Ohne das wäre die Rangliste im Januar leer, wenn die Daten im Oktober angelegt wurden. Der Seeder nutzt eine injizierte `java.time.Clock`. Ein Test rückt die Uhr um zwei Monate vor und prüft, dass die Monate ergänzt werden, ohne doppelte Einträge zu erzeugen.
 
 - **Produktkatalog:** etwa 40 typische deutsche Supermarktprodukte ohne Barcode (Barcodes nicht erfinden).
 - **Persona-Vorlage „Mia“:** Studentin in einer WG, Haushalt 1, Budget 260 € pro Monat. 12 Monate Historie mit je 3–6 Einkäufen in 3 Läden. Sparquoten zwischen 0 und 25 %, ein Monat über Budget. Im laufenden Monat: Budget gesetzt, 2 Einkäufe, Liste mit 6 Einträgen (2 davon schon im Vorrat, damit die Warnung sichtbar ist), Vorrat mit 12 Einträgen (2 laufen in ≤ 3 Tagen ab, 1 ist abgelaufen), 4 Gewohnheiten.
 - **Rangliste:** 15 feste Seed-Nutzer mit Pseudonymen (z. B. „Sparfuchs Kreuzberg“), Haushalt 1–4, je 6 abgeschlossene Monate. Sie können sich nicht einloggen.
-- **Kurse:** monatliche Schlusskurse von ACWI und AGG für mindestens 10 Jahre in `backend/src/main/resources/seed/prices.csv`. Steht ein `TWELVEDATA_API_KEY` in `.env`, holst du sie einmalig echt (`GET https://api.twelvedata.com/time_series?symbol=ACWI&interval=1month&outputsize=5000&apikey=…`, maximal 8 Aufrufe pro Minute). Ohne Key erzeugst du plausible synthetische Kurse, markierst die Datei im Kopf als „SYNTHETISCH“ und notierst das in ENTSCHEIDUNGEN.md.
+- **Kurse:** monatliche Schlusskurse von ACWI und AGG für mindestens 10 Jahre in `backend/src/main/resources/seed/prices.csv`. Prompt 2 erzeugt plausible synthetische Kurse, markiert die Datei im Kopf als „SYNTHETISCH“ und notiert das in ENTSCHEIDUNGEN.md. Echte Kurse über Twelve Data holt das Team zu M4 (Abschnitt 18).
 
 ## 12. Externe APIs
 
 - **Open Food Facts:** `GET https://world.openfoodfacts.org/api/v2/product/{barcode}.json?fields=product_name,product_name_de,image_front_small_url,nutriscore_grade,categories_tags`. Nur über das Backend, mit eigenem `User-Agent` („Korbgeld/0.1 (HTW Berlin Studienprojekt)“) und 3 Sekunden Timeout. Erst in der eigenen Datenbank nachsehen, dann extern fragen, das Ergebnis als `Product` speichern. Unbekannte Barcodes ergeben 404, Ausfall ergibt 502.
-- **Twelve Data (optional):** `TwelveDataClient` mit Key aus `TWELVEDATA_API_KEY`. Beim Start, wenn ein Key vorhanden ist und der neueste `PricePoint` älter als 35 Tage ist, werden die Monatskurse aktualisiert. Ohne Key oder bei Fehlern läuft alles mit den Seed-Kursen weiter, mit einem Log-Eintrag.
+- **Twelve Data (optional, Team zu M4):** `TwelveDataClient` mit Key aus `TWELVEDATA_API_KEY`. Beim Start, wenn ein Key vorhanden ist und der neueste `PricePoint` älter als 35 Tage ist, werden die Monatskurse aktualisiert. Ohne Key oder bei Fehlern läuft alles mit den Seed-Kursen weiter, mit einem Log-Eintrag.
 - **Barcode-Scan im Browser:** `@zxing/browser` über die Kamera. Das funktioniert nur unter HTTPS oder localhost. Ein Eingabefeld für die Barcode-Nummer ist immer da.
 
 ## 13. Tests (Mindestumfang am Ende von Prompt 2)
 
 **Backend, mindestens 20 Tests:**
-- Unit: `BudgetService` (Sperre, Obergrenze, Restbudget, Sparquote), `PurchaseService` (Abschluss, Zusammenfassen im Vorrat), `LeaderboardService` (Sortierung, Gleichstand, Sandbox ausgeschlossen), `SavingsPlanCalculator` (feste Kurse, fehlender Monat), `RiskProfile` (Punktgrenzen)
+- Unit: `BudgetService` (Sperre, Obergrenze, Restbudget, Sparquote), `PurchaseService` (Abschluss, Zusammenfassen im Vorrat), `LeaderboardService` (Sortierung, Gleichstand, Sandbox ausgeschlossen), Seeder (Auffüllen mit vorgerückter `Clock`), Demo-Login (Tageslimit 429)
 - Web: `@WebMvcTest` für `ListItemController` (GET 200, POST mit ungültiger Menge 400), ProblemDetail für 404 und 501
 - Integration (Testcontainers): die ganze Kern-Kette über MockMvc (Demo-Login, Liste, abhaken, Einkauf abschließen, Vorrat, Restbudget) und die Datentrennung zwischen zwei Nutzern
-- Externe Clients mit `MockRestServiceServer`: Erfolg, 404 und Timeout
+- Open-Food-Facts-Client mit `MockRestServiceServer`: Erfolg, 404 und Timeout
 
 **Frontend, mindestens 10 Tests:**
 - Router: `wip`-Route rendert die In-Arbeit-Ansicht, unbekannter Pfad die 404-Ansicht
 - API-Client: 501 und 404 werden richtig weitergeleitet, Barcode-404 nicht
 - Einkaufsliste rendert Einträge per `v-for` und zeigt die Vorrats-Warnung
 - Restbudget-Anzeige (positiv, negativ), Ablauf-Labels im Vorrat
-- Umrechnung der Sparplan-Daten für das Diagramm
+- Registrierungsformular (Pflichtfelder, Haushaltsgröße 1–6)
 
 ## 14. CI/CD und Deployment
 
@@ -262,7 +272,7 @@ Alle Daten werden **relativ zum aktuellen Datum** erzeugt, damit Rangliste und S
 `.gitignore`, `.claude/agents/prof-kritiker.md` wörtlich aus Anhang A als erster Commit vor jedem App-Code, `CLAUDE.md` (Arbeitsregeln in Kurzform, Repo-Struktur, Befehle, Verweis auf AUFTRAG.md), `docs/lernen/`. Danach prüft der Kritiker AUFTRAG.md, Bericht als `docs/reviews/00-auftrag.md`. Ist der Subagent in der laufenden Session noch nicht als eigener Typ verfügbar, startest du einen allgemeinen Subagenten und gibst ihm den Inhalt von `prof-kritiker.md` als Anweisung.
 
 **Phase 1: Gerüst (Prompt 1)**
-Backend über start.spring.io mit den Abhängigkeiten aus Abschnitt 5, **noch ohne Security**. `Product` und `ListItem` mit Flyway-Migration und `GET /api/list-items` (Stand M1). Lokale Datenbank über Docker Compose oder Neon-Branch, `.env`-Anbindung. Frontend mit `create-vue`, Listenansicht per `v-for` (Stand M2), Anbindung an das Backend inklusive CORS. Beide Workflows in `.github/workflows/`. Kritiker prüft das Gerüst, Bericht als `docs/reviews/01-geruest.md`.
+Backend über start.spring.io mit den Abhängigkeiten aus Abschnitt 5, **noch ohne Security**. `Product` und `ListItem` mit Flyway-Migration und `GET /api/list-items` (Stand M1). Lokale Datenbank über Docker Compose, `.env`-Anbindung. Frontend mit `create-vue`, Listenansicht per `v-for` (Stand M2), Anbindung an das Backend inklusive CORS. Beide Workflows in `.github/workflows/`. Kritiker prüft das Gerüst, Bericht als `docs/reviews/01-geruest.md`.
 
 **Phase 2: Querschnitt (Prompt 2)**
 Spring Security mit JWT und Demo-Login (Abschnitt 10), `owner`-Spalten per neuer Migration, Fehlerbehandlung (Abschnitt 8), vollständiges Schema und Seeder inklusive Kurs-Seed (Abschnitt 11), Router mit Status, In-Arbeit- und 404-Ansicht, API-Client, Layout und Design-Tokens (Abschnitt 15), `backend/Dockerfile`. Tests dazu. Commit.
@@ -271,12 +281,12 @@ Spring Security mit JWT und Demo-Login (Abschnitt 10), `owner`-Spalten per neuer
 UC1 Budget, UC2 Liste mit Barcode und Vorrats-Warnung, UC4 Einkauf abschließen, UC5 Vorrat, Dashboard. Integrationstest der ganzen Kette. Danach Kritiker, Bericht als `docs/reviews/02-kern.md`, Blocker beheben. Commit.
 
 **Phase 4: Demo-Bereiche (Prompt 2)**
-UC3 Gewohnheiten, UC6 Rangliste, UC7 Sparplan mit Risikoprofil, Musterportfolio, `TwelveDataClient`, Rechner und Diagramm. Tests. Commit.
+Nur lesende Demo-Bereiche: UC3 Gewohnheiten (`GET habits`), UC6 Rangliste (`GET leaderboard` mit Sortierung nach Abschnitt 7) und UC7 Sparplan-Seite mit Musterportfolios (`GET invest/portfolios`) und Pflichthinweis. Kein Rechner, kein Risikoprofil, kein `TwelveDataClient`, kein Diagramm, denn diese Teile baut das Team (Abschnitt 18). Schreibende Buttons sind deaktiviert mit Tooltip „Kommt mit Milestone M4“. Tests. Commit.
 
 **Phase 5: Abschluss (Prompt 2)**
 1. Stubs und `wip`-Routen prüfen.
 2. Wenn Playwright installierbar ist: Screenshots aller Routen bei 390 px und 1280 px Breite nach `docs/screenshots/`, eingeloggt als Demo-Nutzer. Das ist die Grundlage für die Screenshot-Dokumentation pro Use Case.
-3. README (Start lokal mit Docker und mit Neon-Branch, Tests), `docs/DEPLOY.md` und `docs/STATUS.md` schreiben.
+3. README (Start lokal mit Docker, Tests), `docs/DEPLOY.md` und `docs/STATUS.md` schreiben.
 4. Kritiker final, Bericht als `docs/reviews/03-final.md`, Blocker beheben.
 5. Smoke-Test mit curl gegen das lokal laufende Backend (siehe Zielbedingung), Ausgabe zeigen.
 6. Abschluss-Commit, `git status` sauber.
@@ -288,6 +298,18 @@ UC3 Gewohnheiten, UC6 Rangliste, UC7 Sparplan mit Risikoprofil, Musterportfolio,
 - Bekannte Schwächen und Annahmen (Verweis auf ENTSCHEIDUNGEN.md)
 - Nächste Schritte entlang der Milestones: M2 8. Nov., M3 22. Nov. (Deployment auf Render), M4 13. Dez., Abgabe 17. Jan., 23:59 Uhr
 - Die „Fragen, die ich in der Demo stellen würde“ aus dem letzten Kritiker-Bericht
+
+## 18. Ausbau bis M4 durch das Team (nicht Teil von Prompt 2)
+
+Diese Teile schreibt das Team selbst, mit interaktiver Begleitung wie in Prompt 1. Prompt 2 baut sie **nicht**. Ziel: Danach funktionieren mindestens 7 Use Cases von Anfang bis Ende, und das Team kennt jede Zeile davon.
+
+| Use Case | Was echt wird | Tests |
+|---|---|---|
+| UC7 Sparplan | Risikoprofil (Abschnitt 7) berechnen und speichern (`PUT invest/risk-profile`), Musterportfolio wählen und speichern (neue Spalten `riskProfile`, `chosenPortfolio` an `AppUser` per Migration), `SavingsPlanCalculator`, `GET invest/savings-plan`, Diagramm mit `vue-chartjs` | `SavingsPlanCalculator` (feste Kurse, fehlender Monat), `RiskProfile` (Punktgrenzen), Frontend-Umrechnung für das Diagramm |
+| UC7 Kurse (optional) | `TwelveDataClient` nach Abschnitt 12 | `MockRestServiceServer`: Erfolg, 404, Timeout |
+| UC3 Gewohnheiten | Gewohnheiten anlegen, ändern, löschen. Fällige Gewohnheiten setzen Artikel auf die Liste. | Service-Test für Fälligkeit |
+| UC6 Rangliste | Opt-in und Pseudonym über das Profil ändern. Die Rangliste spiegelt die Änderung. | Integrationstest Opt-in/Opt-out |
+| Profil (Reserve, UC8) | `/profil` wechselt von `wip` zu `ready`: `displayName`, `householdSize`, `leaderboardOptIn` bearbeiten | Validierung `householdSize` 1–6 |
 
 ---
 

@@ -23,3 +23,5 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - `docs/lernen/LOGBUCH.md`, `docs/lernen/GLOSSAR.md`, `docs/ENTSCHEIDUNGEN.md`
 - **Konzepte:** `.gitignore`, Staging-Bereich, Commit-Konventionen, gepushte Historie nicht umschreiben, Subagent mit eigenem Kontext, CLAUDE.md als Projektgedächtnis.
 - **Git-Lektion:** Der erste Commit `1f57f1b first` enthält Kritiker, `.gitignore` und Auftrag zusammen. Er war schon gepusht und bleibt deshalb so.
+- **Kritiker-Review:** `docs/reviews/00-auftrag.md`. Ein Blocker (AUFTRAG.md widersprach der Datenbank-Entscheidung), 7 Major-, 12 Minor-Befunde. Die Entscheidungen dazu stehen in `docs/ENTSCHEIDUNGEN.md` (E2–E4). AUFTRAG.md ist jetzt v1.2 mit neuem Abschnitt 18 (Team-Ausbau bis M4).
+- **Lektion:** Eine Entscheidung muss überall nachgezogen werden, wo sie gilt. E1 stand nur in ENTSCHEIDUNGEN.md, aber AUFTRAG.md hat Vorrang, und genau das hat der Kritiker gefunden.

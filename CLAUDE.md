@@ -7,7 +7,8 @@ Semesterprojekt „Korbgeld“ im Modul Web-Technologien (HTW Berlin). Das volls
 - Zweierteam, 3. Semester Wirtschaftsinformatik. Java aus Programmieren 1 und 2 ist bekannt. Spring Boot als Anwendung und Vue.js sind neu.
 - Das Team muss jede Zeile erklären können. Lesbarer, konventioneller Code statt cleverer Abstraktion.
 - Prompt 1 (Lernen) ist interaktiv: Konzepte erklären, bevor sie benutzt werden.
-- Das Team schreibt selbst nur Spring- und Vue-Code (`TODO(human)`). Doku, Konfiguration und Git-Commits übernimmt Claude und erklärt sie kurz.
+- In Prompt 1 und beim Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) schreibt das Team Spring- und Vue-Code selbst (`TODO(human)`). Doku, Konfiguration und Git-Commits übernimmt Claude und erklärt sie kurz.
+- Prompt 2 baut die Phasen 2 bis 5 autonom und ohne `TODO(human)`, aber nur im verkleinerten Umfang aus AUFTRAG.md v1.2. Die Teile aus Abschnitt 18 baut er nicht.
 
 ## Arbeitsregeln (Kurzform von AUFTRAG.md, Abschnitt 2)
 
