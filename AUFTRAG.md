@@ -1,6 +1,6 @@
 # Auftrag: Machbarkeitsbeweis „Korbgeld“
 
-Version 1.5 · 07.10.2026
+Version 1.6 · 07.10.2026
 
 Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prompts umgesetzt:
 
@@ -24,6 +24,8 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 **Änderungen gegenüber v1.3** (Entscheidung E7): Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen (M1–M4) beteiligt. Alles andere baut Claude autonom. Regel 15 ist angepasst.
 
 **Änderungen gegenüber v1.4** (Entscheidungen E8, E9): Den Ausbau zu M4 (Abschnitt 18) baut Claude, das Team ist dabei an den Frontend-Backend-Verbindungen beteiligt und nimmt M4 ab. CORS erlaubt auch `PUT`.
+
+**Änderungen gegenüber v1.5** (E10): Prompt 2 läuft ohne Haltepunkte, Regel 15 (a) ist für Prompt 2 ausgesetzt.
 
 ## 0. Platzhalter
 
@@ -65,7 +67,7 @@ Pflichtvorgaben des Moduls: Spring Boot, Vue.js, Postgres, Deployment auf Render
 12. Rufe den Subagenten `prof-kritiker` (Anhang A) nach Phase 0, nach Phase 1, nach Phase 3 und am Ende auf. Blocker behebst du sofort. Major-Befunde behebst du oder stellst sie begründet in `docs/ENTSCHEIDUNGEN.md` zurück.
 13. Die Kostenregel (Abschnitt 3) ist nicht verhandelbar.
 14. Halte nach jeder Phase in `docs/lernen/LOGBUCH.md` fest, was entstanden ist und welche Konzepte darin vorkommen (mit Dateipfaden). Neue Fachbegriffe kommen mit einem Satz Erklärung in `docs/lernen/GLOSSAR.md`. Prompt 3 baut darauf auf.
-15. **Team einbinden (E5, E7).** Das Team ist an genau zwei Stellen beteiligt. (a) **Verbindung von Frontend und Backend:** API-Client, CORS, erster Endpunkt-Aufruf aus Vue, Lade- und Fehlerzustände, ab Phase 2 JWT-Header und Weiterleitung von 401/404/501. Dort zuerst den Request-Weg erklären, die tragenden Stellen vom Team schreiben lassen (`TODO(human)`) und danach einen Request gemeinsam verfolgen (DevTools, Backend-Log, SQL-Log, Tabelle). (b) **Milestone-Abnahme bei M1, M2, M3 und M4:** anhalten, das Erreichte zeigen und erklären, das Team startet und prüft selbst, offene Punkte nennen, erst nach dem „weiter“ des Teams fortfahren. Ein `TODO(human)` legt immer genau fest, was zu tun ist und wie es geht (Ziel, Datei und Stelle, Klassen/Annotationen/Syntax, Schritte, erwartetes Ergebnis, Prüfung). Das Team setzt es um, Claude prüft danach. Alles andere baut Claude autonom, prüft es gründlich und erklärt es kurz in `docs/lernen/LOGBUCH.md`. Für die Haltepunkte (a) und (b) geht diese Regel vor Regel 5.
+15. **Team einbinden (E5, E7; für Prompt 2 ausgesetzt durch E10).** Das Team ist an genau zwei Stellen beteiligt. (a) **Verbindung von Frontend und Backend:** API-Client, CORS, erster Endpunkt-Aufruf aus Vue, Lade- und Fehlerzustände, ab Phase 2 JWT-Header und Weiterleitung von 401/404/501. Dort zuerst den Request-Weg erklären, die tragenden Stellen vom Team schreiben lassen (`TODO(human)`) und danach einen Request gemeinsam verfolgen (DevTools, Backend-Log, SQL-Log, Tabelle). (b) **Milestone-Abnahme bei M1, M2, M3 und M4:** anhalten, das Erreichte zeigen und erklären, das Team startet und prüft selbst, offene Punkte nennen, erst nach dem „weiter“ des Teams fortfahren. Ein `TODO(human)` legt immer genau fest, was zu tun ist und wie es geht (Ziel, Datei und Stelle, Klassen/Annotationen/Syntax, Schritte, erwartetes Ergebnis, Prüfung). Das Team setzt es um, Claude prüft danach. Alles andere baut Claude autonom, prüft es gründlich und erklärt es kurz in `docs/lernen/LOGBUCH.md`. Für die Haltepunkte (a) und (b) geht diese Regel vor Regel 5.
 
 ## 3. Kostenregel
 

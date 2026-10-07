@@ -86,3 +86,11 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Grund:** Passt zur Arbeitsweise aus E7. So stehen zu M4 mindestens 7 echte Use Cases, und das Team schreibt die Teile, die das Zusammenspiel zeigen.
 - **Folge:** Prompt 2 bleibt verkleinert (E2): Phase 4 baut nur lesende Demo-Bereiche. Der Ausbau folgt danach als eigener Schritt zu M4.
 - **Verworfene Alternativen:** Das Team schreibt den Ausbau komplett selbst (ursprünglicher Plan aus E2, zu viel Zeit). Claude baut ihn ganz ohne Team-Beteiligung (keine Verbindungsteile vom Team).
+
+## E10: Prompt 2 ohne Haltepunkte
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Das Team hat Prompt 2 mit „starte, mach alles“ freigegeben. Claude baut Phase 2 bis 5 vollständig, auch die Frontend-Backend-Verbindungen (API-Client mit JWT und ApiError, Demo-Login), ohne Haltepunkte und ohne `TODO(human)`. Am Ende steht eine Abnahme durch das Team. Die Goal-Dateien A/B (zwei Läufe mit Halt) werden dafür nicht gebraucht.
+- **Grund:** Wunsch des Teams. Das Verständnis entsteht über LOGBUCH, die Abnahme und Prompt 3.
+- **Folge:** Regel 15 (a) ist für Prompt 2 ausgesetzt. Die Milestone-Abnahmen (M3, M4) und die Beteiligung am Ausbau zu M4 (E9) bleiben.
+- **Verworfene Alternative:** Zwei Goal-Läufe mit Halt bei H1/H2.

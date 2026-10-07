@@ -10,6 +10,8 @@ Semesterprojekt „Korbgeld“ im Modul Web-Technologien (HTW Berlin). Das volls
 
 ## Einbindung des Teams (E5, angepasst durch E7)
 
+**Für Prompt 2 gilt E10:** keine Haltepunkte, Claude baut alles inklusive der Frontend-Backend-Verbindungen. Am Ende Abnahme durch das Team.
+
 Das Team wird nur an zwei Stellen beteiligt, sonst arbeitet Claude selbstständig:
 
 1. **Verbindung von Frontend und Backend.** Dazu gehört alles, was die beiden Seiten verbindet: API-Client im Frontend (`fetch`, `VITE_API_BASE_URL`), CORS im Backend, der erste Aufruf eines Endpunkts aus Vue, Lade- und Fehlerzustände, ab Phase 2 das JWT im `Authorization`-Header und das Weiterleiten von 401/404/501. Hier gilt:
