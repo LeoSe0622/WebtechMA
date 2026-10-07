@@ -57,6 +57,7 @@ function percent(share: number): string {
       <div class="actions">
         <button class="button" type="button" disabled title="Kommt mit Milestone M4">Risikoprofil ermitteln</button>
         <button class="button" type="button" disabled title="Kommt mit Milestone M4">Sparplan berechnen</button>
+        <span class="coming-soon">Kommt mit Milestone M4</span>
       </div>
     </template>
   </section>
@@ -111,6 +112,7 @@ h2 {
 .actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
 

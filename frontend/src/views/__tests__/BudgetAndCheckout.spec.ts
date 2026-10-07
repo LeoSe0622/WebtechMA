@@ -4,13 +4,14 @@ import { createPinia, setActivePinia } from 'pinia'
 import BudgetView from '../BudgetView.vue'
 import CheckoutView from '../CheckoutView.vue'
 import { ApiError } from '@/api/client'
-import { fetchBudget, saveBudget, type Budget } from '@/api/budget'
+import { fetchBudget, fetchBudgetSummary, saveBudget, type Budget, type BudgetSummary } from '@/api/budget'
 import { completePurchase, fetchStores, type CompletePurchaseResponse, type Store } from '@/api/purchases'
 import { fetchListItems } from '@/api/listItems'
 import type { ListItem } from '@/types/listItem'
 
 vi.mock('@/api/budget', () => ({
   fetchBudget: vi.fn<() => Promise<Budget>>(),
+  fetchBudgetSummary: vi.fn<() => Promise<BudgetSummary>>(),
   saveBudget: vi.fn<() => Promise<Budget>>(),
 }))
 vi.mock('@/api/purchases', () => ({
@@ -24,6 +25,7 @@ const stubs = { global: { stubs: { RouterLink: true } } }
 describe('BudgetView', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.mocked(fetchBudgetSummary).mockResolvedValue({ yearMonth: '2026-12', amount: null, spent: 0, remaining: null, locked: false, lastCompleted: null })
     vi.mocked(fetchBudget).mockRejectedValue(new ApiError(404, { status: 404 }))   // noch kein Budget
     vi.mocked(saveBudget).mockReset()
   })
@@ -37,7 +39,10 @@ describe('BudgetView', () => {
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    expect(vi.mocked(saveBudget).mock.calls[0]![1]).toBe(1000)
+    expect(vi.mocked(saveBudget).mock.calls[0]).toEqual(['2026-12', 1000])
+    // Monate kommen vom Backend, der Jahreswechsel wird richtig gerechnet
+    expect(wrapper.text()).toContain('Dezember 2026')
+    expect(wrapper.text()).toContain('Januar 2027')
     expect(wrapper.text()).toContain('Budget gespeichert.')
   })
 

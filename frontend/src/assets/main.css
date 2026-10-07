@@ -14,6 +14,14 @@
   --danger: #cf222e;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  /* Höhe der unteren Tab-Leiste; nur auf schmalen Bildschirmen vorhanden */
+  --tabbar-height: 0px;
+}
+
+@media (max-width: 719px) {
+  :root {
+    --tabbar-height: 56px;
+  }
 }
 
 *,
@@ -88,6 +96,12 @@ select {
 
 .amount {
   font-variant-numeric: tabular-nums;
+}
+
+/* Kleiner sichtbarer Hinweis neben deaktivierten Buttons (title-Tooltips erscheinen auf Touch-Geräten nicht) */
+.coming-soon {
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 .page-title {

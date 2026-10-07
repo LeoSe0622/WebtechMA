@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { fetchBudget, saveBudget, type Budget } from '@/api/budget'
+import { fetchBudget, fetchBudgetSummary, saveBudget, type Budget } from '@/api/budget'
 import { ApiError } from '@/api/client'
 import { useAuthStore } from '@/stores/auth'
 import { formatEuro, parseEuro } from '@/config'
 
 const auth = useAuthStore()
 
-// Budgets lassen sich für den laufenden und den nächsten Monat festlegen
-function monthKey(offset: number): string {
-  const date = new Date()
-  date.setDate(1)
-  date.setMonth(date.getMonth() + offset)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+// "2026-12" → "2027-01"; reine Textrechnung, ohne Browser-Uhr und Zeitzone
+function nextMonth(key: string): string {
+  const [year, month] = key.split('-').map(Number)
+  return month === 12 ? `${year! + 1}-01` : `${year}-${String(month! + 1).padStart(2, '0')}`
 }
 
 function monthLabel(key: string): string {
@@ -29,13 +27,25 @@ interface MonthState {
   busy: boolean
 }
 
-const months = ref<MonthState[]>([monthKey(0), monthKey(1)].map((key) => ({
-  key, budget: null, input: '', message: null, error: null, busy: false,
-})))
+const months = ref<MonthState[]>([])
 const loading = ref(true)
+const loadError = ref<string | null>(null)
 const maxBudget = (auth.user?.householdSize ?? 1) * 500
 
 onMounted(async () => {
+  // Den laufenden Monat bestimmt das Backend (deutsche Zeit), nicht die Uhr des Browsers
+  let current: string
+  try {
+    current = (await fetchBudgetSummary()).yearMonth
+  } catch {
+    loadError.value = 'Die Budgets konnten nicht geladen werden. Läuft das Backend?'
+    loading.value = false
+    return
+  }
+  // Budgets lassen sich für den laufenden und den nächsten Monat festlegen
+  months.value = [current, nextMonth(current)].map((key) => ({
+    key, budget: null, input: '', message: null, error: null, busy: false,
+  }))
   await Promise.all(months.value.map(async (month) => {
     try {
       month.budget = await fetchBudget(month.key)
@@ -80,6 +90,7 @@ async function save(month: MonthState) {
     </p>
 
     <p v-if="loading" class="muted">Wird geladen …</p>
+    <p v-else-if="loadError" class="error" role="alert">{{ loadError }}</p>
     <div v-else class="months">
       <form v-for="month in months" :key="month.key" class="box month" @submit.prevent="save(month)">
         <h2>{{ monthLabel(month.key) }}</h2>

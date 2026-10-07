@@ -29,6 +29,6 @@ const ui = useUiStore()
 .content {
   max-width: 960px;
   margin: 0 auto;
-  padding: 24px 16px 96px;
+  padding: 24px 16px calc(96px + var(--tabbar-height));
 }
 </style>

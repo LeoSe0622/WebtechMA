@@ -11,6 +11,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **CI (Continuous Integration)**: Bei jedem Push baut und testet ein Server automatisch den Code, bei uns GitHub Actions.
 - **CLAUDE.md**: Datei im Repo-Wurzelordner, die Claude Code zu Beginn jeder Session automatisch liest, das Projektgedächtnis.
 - **Clock (injiziert)**: Die aktuelle Zeit kommt als Bean aus Spring statt aus Instant.now(), damit Tests eine feste oder vorgerückte Uhr einsetzen können.
+- **Code-Splitting**: Der Build teilt das JavaScript in mehrere Dateien. Selten gebrauchte Teile (hier der Barcode-Scanner) lädt der Browser erst bei Bedarf.
 - **Commit**: Ein gespeicherter Schnappschuss des Projekts mit Nachricht, Autor und Zeitpunkt.
 - **computed**: Vue-Funktion für abgeleitete Werte, die automatisch neu berechnet werden, wenn sich ihre Grundlage ändert.
 - **Container**: Abgeschottete Laufzeitumgebung, in der ein Programm (z. B. Postgres) mit allem läuft, was es braucht, ohne es ins Betriebssystem zu installieren.
@@ -43,8 +44,10 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Open Food Facts**: Freie Produktdatenbank (ODbL), die zu einem Barcode Name, Bild, Nutri-Score und Kategorien liefert, ohne Konto und Key.
 - **Optimistisches Aktualisieren**: Die Oberfläche zeigt eine Änderung sofort an und nimmt sie zurück, falls das Speichern im Backend scheitert.
 - **Pinia**: Zentrale Ablage für Zustand, den mehrere Komponenten teilen (z. B. das Login-Token ab Phase 2).
+- **Playwright**: Werkzeug, das einen echten Browser fernsteuert, z. B. um Screenshots aller Seiten automatisch aufzunehmen.
 - **Preflight**: Vorab-Anfrage (OPTIONS), mit der der Browser bei z. B. PATCH oder DELETE prüft, ob der Server die eigentliche Anfrage erlaubt.
 - **ProblemDetail**: Standardformat für Fehlerantworten (RFC 9457) mit status, title, detail und eigenen Zusatzfeldern wie path oder errors.
+- **Produktions-Build**: Das mit npm run build erzeugte, optimierte Frontend in dist/, genau das, was Render ausliefert. Ohne Entwicklerwerkzeuge.
 - **Profil (Spring)**: Benannte Konfigurationsvariante, z. B. dev, deren Einstellungen (application-dev.yml) nur gelten, wenn das Profil aktiv ist.
 - **Promise**: Versprechen auf ein späteres Ergebnis einer asynchronen Operation, vergleichbar mit CompletableFuture in Java.
 - **Props / Emits**: Props reichen Daten von der Eltern- an die Kindkomponente weiter. Emits melden Ereignisse vom Kind an die Eltern zurück.
@@ -52,6 +55,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Reaktivität**: Vue merkt sich, welche Teile der Anzeige von welchen Daten abhängen, und aktualisiert genau diese Teile, wenn sich die Daten ändern.
 - **Record**: Kompakte Java-Klasse für unveränderliche Daten. Konstruktor und Getter erzeugt Java selbst. Bei uns für DTOs.
 - **ref**: Vue-Funktion für reaktiven Zustand. Ändert sich .value, aktualisiert Vue die Anzeige automatisch.
+- **Regressionstest**: Test, der einen einmal gefundenen Fehler festhält, damit er bei späteren Änderungen nicht unbemerkt zurückkommt.
 - **Render**: Hosting-Dienst, auf dem Backend und Frontend öffentlich laufen (Modulvorgabe).
 - **Repository (Spring Data)**: Interface, zu dem Spring beim Start die Implementierung mit save, findAll usw. erzeugt. Methodennamen werden zu Abfragen.
 - **RestClient**: Spring-Klasse, mit der das Backend selbst HTTP-Anfragen an andere Dienste schickt, z. B. an Open Food Facts.
@@ -64,6 +68,7 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Sparquote**: max(0, Restbudget) ÷ Budget eines abgeschlossenen Monats, Grundlage für die Rangliste und den Sparplan.
 - **Staging-Bereich**: Zwischenablage von Git. Nur was dort per `git add` liegt, kommt in den nächsten Commit.
 - **Subagent**: Eigene Claude-Instanz mit leerem Kontext und begrenzten Werkzeugen, die eine Teilaufgabe unabhängig erledigt, bei uns der `prof-kritiker`.
+- **Tab-Leiste**: Navigation am unteren Bildschirmrand auf dem Handy, mit dem Daumen erreichbar; bei Korbgeld unter 720 px Breite.
 - **Testcontainers**: Bibliothek, die für Tests automatisch einen echten Datenbank-Container startet und danach wieder entfernt.
 - **@Transactional**: Alle Datenbankschritte einer Methode gelten gemeinsam: Scheitert einer, wird alles zurückgerollt (alles oder nichts).
 - **v-for / :key**: Vue-Anweisung, die ein Element pro Listeneintrag erzeugt. :key gibt jedem Element eine eindeutige Kennung, damit Vue es wiedererkennt.

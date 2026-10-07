@@ -68,7 +68,8 @@ public class BudgetService {
         MonthlyBudget budget = existing.orElseGet(() -> new MonthlyBudget(user, month, amount));
         budget.changeAmount(amount);
         budgetRepository.save(budget);
-        return new BudgetResponse(month, budget.getAmount(), false);
+        // Erstes Budget nach einem Einkauf: ab sofort gesperrt, das soll die Antwort auch sagen
+        return new BudgetResponse(month, budget.getAmount(), hasPurchases(userId, month));
     }
 
     @Transactional(readOnly = true)

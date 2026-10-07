@@ -161,3 +161,16 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
 - **Backend:** `habit/HabitController.java` + `HabitService.java` (`GET /api/habits`), `leaderboard/Ranking.java` (reine Regeln: Sandbox raus, Sparquote absteigend, Gleichstand nach Serie, „Dein Platz wäre“), `leaderboard/LeaderboardService.java` (letzter abgeschlossener Monat, Serie bis 24 Monate, man selbst steht nie in der Liste), `invest/ModelPortfolio.java` (Enum, 30/70, 60/40, 100), `invest/InvestController.java` (`GET /api/invest/portfolios`). Tests jetzt 40: `RankingTest` (4) und `DemoAreasIntegrationTest` (3).
 - **Frontend:** `HabitsView`, `LeaderboardView`, `SavingsPlanView` mit `DemoBanner`, deaktivierten Buttons mit Tooltip „Kommt mit Milestone M4“ und dem Pflichthinweis auf dem Sparplan (wörtlich). Routen mit `meta.status: 'demo'`. Navigation bricht auf schmalen Bildschirmen in eine eigene Zeile um, statt versteckt zu scrollen (Review 02, m11). Tests jetzt 35.
 - **Konzepte:** reine Funktionen für Fachregeln (ohne Datenbank testbar), `Comparator.comparing(...).thenComparing(...)`, Enum mit Daten, ehrliche Kennzeichnung von Demo-Bereichen, CSS-Spezifität und Reihenfolge von Regeln.
+
+## Phase 5: Abschluss (07./08.10.2026)
+
+- **Screenshots:** `docs/screenshots/`, 30 Bilder: alle Routen aus AUFTRAG.md, Abschnitt 9, bei 390 px und 1280 px, dazu die Vorrats-Warnung und der Einkaufsabschluss (Formular und Erfolg). Aufgenommen mit Playwright gegen den **Produktions-Build** (`vite preview`) als Demo-Nutzer. Playwright lag nur im Arbeitsordner und ist keine Abhängigkeit des Projekts.
+- **Beim Durchsehen der Bilder gefunden und behoben:** Die globale Feldregel (44 px) traf auch Checkboxen. CSS-Breiten wie „30 %“ mit Leerzeichen sind ungültig, deshalb waren alle Sparplan-Balken gleich breit. Doppelter Punkt im Demo-Hinweis. Media-Queries standen vor der Grundregel und wirkten deshalb nicht.
+- **Doku:** `README.md` (Start lokal mit Docker, Tests), `docs/DEPLOY.md` (Klick-für-Klick für Neon und Render, ohne Blueprint und ohne Render-Datenbank, mit Stolperstellen), `docs/STATUS.md` (Use Cases, Tests, Screenshots, Schwächen, Milestones, Demo-Fragen), `docs/IDEEN.md`.
+- **Finales Review:** `docs/reviews/03-final.md`. Keine Blocker, 3 Major, 11 Minor. Umgang: E21. Wichtigste Änderung: Auf dem Handy liegt die Navigation jetzt als Tab-Leiste unten (`AppHeader.vue`), die Einkaufsliste hat wieder Platz. Neuer `SandboxCleanupIntegrationTest`. Der Barcode-Scanner wird erst bei Bedarf geladen (Haupt-Bundle 612 → 138 kB).
+- **Stand:** Backend 41 Tests, Frontend 36 Tests, Lint und Build sauber, beide Workflows grün.
+- **Konzepte:** Playwright (Browser fernsteuern), Produktions-Build vs. Entwicklungsserver, Code-Splitting mit `defineAsyncComponent` und dynamischem `import()`, Mobile-first-Navigation (Tab-Leiste), CSS-Variablen für gemeinsame Maße, `TransactionTemplate` für Transaktionen im Test, Regressionstest gegen künftige Schemaänderungen.
+- **Lektionen:**
+  - Ein Screenshot ohne JavaScript-Fehler heißt nicht, dass die Seite gut aussieht. Bilder ansehen.
+  - Ein Prozess, der „gestoppt“ ist, kann auf IPv6 weiterlaufen. Den Port prüfen, nicht die Meldung.
+  - Eine Korrektur kann ein Problem verschieben statt lösen (umbrechende Navigation statt versteckter).

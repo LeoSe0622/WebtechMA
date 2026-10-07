@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import ListItemRow from '@/components/ListItemRow.vue'
 import ReceiptStrip from '@/components/ReceiptStrip.vue'
-import BarcodeScanner from '@/components/BarcodeScanner.vue'
 import { createListItem, deleteListItem, fetchListItems, updateListItem, type PantryHint } from '@/api/listItems'
 import { findProductByBarcode, searchProducts, type Product } from '@/api/products'
 import { fetchBudgetSummary, type BudgetSummary } from '@/api/budget'
 import { ApiError, loadPage } from '@/api/client'
 import type { ListItem } from '@/types/listItem'
+
+// Der Scanner (@zxing/browser) ist groß; er wird erst geladen, wenn jemand auf „Kamera“ tippt
+const BarcodeScanner = defineAsyncComponent(() => import('@/components/BarcodeScanner.vue'))
 
 // ref: reaktiver Zustand. Ändert sich ein Wert, aktualisiert Vue das Template selbst.
 const items = ref<ListItem[]>([])
@@ -329,7 +331,8 @@ async function remove(id: number) {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* direkt über der Tab-Leiste (auf breiten Bildschirmen 0) */
+  bottom: var(--tabbar-height);
   padding: 12px 16px;
   background: linear-gradient(to top, var(--bg) 70%, transparent);
   display: flex;

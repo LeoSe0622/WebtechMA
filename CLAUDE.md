@@ -57,7 +57,7 @@ AUFTRAG.md, CLAUDE.md, README.md
 docker-compose.yml, .env.example, .gitignore
 .claude/agents/prof-kritiker.md
 .github/workflows/      backend.yml, frontend.yml
-docs/                   ENTSCHEIDUNGEN.md, IDEEN.md, STATUS.md, DEPLOY.md, reviews/, lernen/
+docs/                   ENTSCHEIDUNGEN.md, IDEEN.md, STATUS.md, DEPLOY.md, reviews/, screenshots/, lernen/
 backend/                Spring Boot, Gradle, Paket de.htwberlin.webtech.korbgeld
 frontend/               Vue 3, TypeScript, Vite
 ```

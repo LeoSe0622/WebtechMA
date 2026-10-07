@@ -6,10 +6,10 @@ Stand: 08.10.2026, Ende von Prompt 2 (Phasen 0–5). Grundlage: AUFTRAG.md v1.6.
 
 | Use Case | Status | Route | Zugehörige Tests | Screenshot |
 |---|---|---|---|---|
-| Login, Registrierung, Demo-Login | **echt** | `/` | `AuthIntegrationTest`, `DemoLimitIntegrationTest`, `StartView.spec.ts`, `client.spec.ts` | `start-390.png`, `start-1280.png` |
+| Login, Registrierung, Demo-Login | **echt** | `/` | `AuthIntegrationTest`, `DemoLimitIntegrationTest`, `SandboxCleanupIntegrationTest`, `StartView.spec.ts`, `client.spec.ts` | `start-390.png`, `start-1280.png` |
 | UC1 Monatsbudget anlegen und ansehen | **echt** | `/budget` | `BudgetServiceTest`, `CoreChainIntegrationTest`, `BudgetAndCheckout.spec.ts` | `budget-*.png` |
-| UC2 Einkaufsliste mit Barcode, Vorrats-Warnung, abhaken | **echt** | `/liste` | `ListItemControllerTest`, `ListItemIntegrationTest`, `CoreChainIntegrationTest`, `CatalogAndSeparationIntegrationTest`, `OpenFoodFactsClientTest`, `ShoppingListView.spec.ts`, `ReceiptStrip.spec.ts` | `liste-*.png` |
-| UC4 Einkauf abschließen | **echt** | `/liste/abschliessen` | `PurchaseServiceTest`, `CoreChainIntegrationTest`, `BudgetAndCheckout.spec.ts` | `liste-abschliessen-*.png` |
+| UC2 Einkaufsliste mit Barcode, Vorrats-Warnung, abhaken | **echt** | `/liste` | `ListItemControllerTest`, `ListItemIntegrationTest`, `CoreChainIntegrationTest`, `CatalogAndSeparationIntegrationTest`, `OpenFoodFactsClientTest`, `ShoppingListView.spec.ts`, `ReceiptStrip.spec.ts` | `liste-*.png`, `liste-warnung-*.png` (Vorrats-Warnung) |
+| UC4 Einkauf abschließen | **echt** | `/liste/abschliessen` | `PurchaseServiceTest`, `CoreChainIntegrationTest`, `BudgetAndCheckout.spec.ts` | `liste-abschliessen-*.png` (Formular), `liste-abschliessen-erfolg-*.png` (neues Restbudget) |
 | UC5 Vorrat, Menge ändern, verbrauchen, Ablauf | **echt** | `/vorrat` | `PantryServiceTest`, `CatalogAndSeparationIntegrationTest`, `PantryView.spec.ts` | `vorrat-*.png` |
 | Dashboard (Restbudget, Sparquote, Ablauf-Warnungen) | **echt** | `/dashboard` | `CoreChainIntegrationTest` (Summary), `ReceiptStrip.spec.ts` | `dashboard-*.png` |
 | UC3 Gewohnheiten | Demo (lesend) | `/gewohnheiten` | `DemoAreasIntegrationTest`, `DemoAreas.spec.ts` | `gewohnheiten-*.png` |
@@ -22,7 +22,7 @@ Stand: 08.10.2026, Ende von Prompt 2 (Phasen 0–5). Grundlage: AUFTRAG.md v1.6.
 
 Alle Screenshots liegen in `docs/screenshots/`, jeweils bei 390 px (Handy) und 1280 px (Desktop), eingeloggt als Demo-Nutzer, aufgenommen vom Produktions-Build.
 
-**Tests:** Backend 40 (Unit, Web, Integration mit Testcontainers gegen Postgres 17), Frontend 35 (Vitest). Beide laufen in GitHub Actions.
+**Tests** (Stand 08.10.2026): Backend 41 (Unit, Web, Integration mit Testcontainers gegen Postgres 17), Frontend 36 (Vitest). Beide laufen in GitHub Actions.
 
 **Echte Use Cases:** 4 (UC1, UC2, UC4, UC5) plus Dashboard und Login. Für die Bestnote fehlen noch drei. Sie entstehen mit dem Ausbau zu M4 (AUFTRAG.md, Abschnitt 18: UC3, UC6, UC7 schreibend, dazu Profil als Reserve).
 
@@ -42,6 +42,8 @@ Alle Annahmen stehen mit Begründung in `docs/ENTSCHEIDUNGEN.md` (E1–E20). Die
 - **Budget-Obergrenze im Frontend** nur als Hinweistext (500 € pro Person fest eingetragen). Maßgeblich ist das Backend, das mit 409 antwortet (E19).
 - **Abhaken auf der Liste** wird sofort gespeichert. Einen Einkauf rückgängig zu machen ist nicht vorgesehen.
 - **Kalender-Grenzen:** Alle Monatsrechnungen laufen in deutscher Zeit (`Europe/Berlin`), auch wenn der Server in UTC läuft.
+- **Rangliste:** rund 200 kleine SQL-Abfragen pro Aufruf (eine pro Nutzer und Monat). Bei 15 Seed-Nutzern unkritisch, vor echten Nutzern zu M4 ersetzen (E21).
+- **Alle Commits von einem Konto:** Bei einem Zweierteam fragt die Prüfung, wer was gebaut hat. Empfehlung: Die zweite Person committet ihre Teile beim Ausbau zu M4 selbst.
 - **Kostenlose Render-Dienste schlafen** nach 15 Minuten ein. Der erste Aufruf dauert dann bis zu einer Minute.
 - **Open Food Facts** kennt nicht jeden Barcode. Unbekannte Barcodes ergeben 404, dann bietet die Oberfläche die manuelle Eingabe an.
 
@@ -58,4 +60,6 @@ Alle Annahmen stehen mit Begründung in `docs/ENTSCHEIDUNGEN.md` (E1–E20). Die
 
 Aus dem letzten Kritiker-Bericht (`docs/reviews/03-final.md`):
 
-_(wird nach dem finalen Review ergänzt)_
+1. `SandboxService.deleteExpiredSandboxUsers` löscht mit einem einzigen `DELETE` einen Demo-Nutzer, der ein eigenes Produkt „Hafermilch Bio“ eingetippt und gekauft hat. Welche Zeilen in welchen Tabellen verschwinden, und warum blockiert der Fremdschlüssel von `purchase_line.product_id` auf `product` das Löschen nicht, obwohl er kein `ON DELETE CASCADE` hat?
+2. Wie viele SQL-Abfragen löst ein `GET /api/leaderboard` aus? Zeigt im Code, woher sie kommen, und skizziert, wie ihr sie auf eine Handvoll reduziert. Warum filtert ihr Sandbox-Nutzer an zwei Stellen, und welche davon wirkt in Produktion? _(Seit E21 nur noch an einer Stelle: `Ranking.rank`.)_
+3. Auf `/liste` tippt der Prüfer „Hafermilch“, wählt den Vorschlag und klickt dann „Trotzdem hinzufügen“. Verfolgt den Weg: Welcher Watcher-Zweig verhindert, dass die Auswahl verloren geht, was steht in der Closure `retry`, welcher Request geht mit welchem Body raus, und warum antwortet das Backend beim ersten Mal mit 200 und beim zweiten Mal mit 201?

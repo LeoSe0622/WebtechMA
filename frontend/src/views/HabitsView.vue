@@ -47,7 +47,10 @@ function formatDate(iso: string): string {
       <p v-else class="muted">Noch keine Gewohnheiten.</p>
 
       <!-- Schreibende Buttons sind auf Demo-Seiten deaktiviert und erklären per Tooltip, warum -->
-      <button class="button" type="button" disabled title="Kommt mit Milestone M4">Gewohnheit anlegen</button>
+      <p class="demo-action">
+        <button class="button" type="button" disabled aria-describedby="coming-soon" title="Kommt mit Milestone M4">Gewohnheit anlegen</button>
+        <span id="coming-soon" class="coming-soon">Kommt mit Milestone M4</span>
+      </p>
     </template>
   </section>
 </template>
@@ -78,6 +81,13 @@ function formatDate(iso: string): string {
 
 .muted {
   color: var(--muted);
+}
+
+.demo-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .error {

@@ -3,6 +3,7 @@ package de.htwberlin.webtech.korbgeld.common.error;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -68,6 +69,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     ProblemDetail handleInvalidCredentials(InvalidCredentialsException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    // Zwei gleichzeitige Anfragen mit demselben eindeutigen Wert (z. B. Benutzername): die zweite ergibt 409
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ProblemDetail handleIntegrity(DataIntegrityViolationException e) {
+        log.warn("Datenbank-Regel verletzt: {}", e.getMostSpecificCause().getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Das gibt es schon oder passt nicht zu den vorhandenen Daten. Lade die Seite neu und versuch es noch einmal.");
     }
 
     // Alles Unerwartete: ins Log schreiben, dem Nutzer nur eine allgemeine Meldung zeigen (keine Interna)

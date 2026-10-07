@@ -16,7 +16,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     long countBySandboxTrueAndCreatedAtAfter(Instant since);
 
-    List<AppUser> findBySandboxFalseAndLeaderboardOptInTrue();
+    List<AppUser> findByLeaderboardOptInTrue();
 
     // Ein DELETE für alle alten Sandbox-Nutzer; ihre Daten löscht die Datenbank per ON DELETE CASCADE mit
     @Modifying

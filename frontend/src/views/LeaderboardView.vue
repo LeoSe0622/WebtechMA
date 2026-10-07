@@ -50,7 +50,7 @@ function percent(rate: number): string {
             <tr>
               <th scope="col">Platz</th>
               <th scope="col">Pseudonym</th>
-              <th scope="col" class="num">Haushalt</th>
+              <th scope="col" class="num wide">Haushalt</th>
               <th scope="col" class="num">Sparquote</th>
               <th scope="col" class="num">Serie</th>
             </tr>
@@ -58,8 +58,11 @@ function percent(rate: number): string {
           <tbody>
             <tr v-for="entry in board.entries" :key="entry.rank">
               <td class="amount">{{ entry.rank }}</td>
-              <td>{{ entry.displayName }}</td>
-              <td class="num amount">{{ entry.householdSize }}</td>
+              <td>
+                {{ entry.displayName }}
+                <span class="narrow muted">Haushalt {{ entry.householdSize }}</span>
+              </td>
+              <td class="num amount wide">{{ entry.householdSize }}</td>
               <td class="num amount">{{ percent(entry.savingsRate) }}</td>
               <td class="num amount">{{ entry.streak }}</td>
             </tr>
@@ -67,7 +70,10 @@ function percent(rate: number): string {
         </table>
       </div>
 
-      <button class="button" type="button" disabled title="Kommt mit Milestone M4">In der Rangliste erscheinen</button>
+      <p class="demo-action">
+        <button class="button" type="button" disabled aria-describedby="coming-soon" title="Kommt mit Milestone M4">In der Rangliste erscheinen</button>
+        <span id="coming-soon" class="coming-soon">Kommt mit Milestone M4</span>
+      </p>
     </template>
   </section>
 </template>
@@ -117,8 +123,36 @@ th {
   text-align: right;
 }
 
+.narrow {
+  display: none;
+}
+
+/* Schmale Bildschirme: Spalte Haushalt als Zusatz unter dem Namen, damit die Serie sichtbar bleibt */
+@media (max-width: 519px) {
+  .wide {
+    display: none;
+  }
+
+  .narrow {
+    display: block;
+    font-size: 0.8125rem;
+  }
+
+  th,
+  td {
+    padding: 10px 8px;
+  }
+}
+
 .muted {
   color: var(--muted);
+}
+
+.demo-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .error {

@@ -49,7 +49,8 @@ public class LeaderboardService {
         YearMonth month = YearMonth.now(clock).minusMonths(1);
 
         List<Candidate> candidates = new ArrayList<>();
-        for (AppUser user : appUserRepository.findBySandboxFalseAndLeaderboardOptInTrue()) {
+        // Sandbox-Nutzer filtert Ranking.rank heraus (eine Stelle, im RankingTest geprüft)
+        for (AppUser user : appUserRepository.findByLeaderboardOptInTrue()) {
             if (!user.getId().equals(currentUserId)) {   // man selbst steht nie in der Liste
                 candidateFor(user, month).ifPresent(candidates::add);
             }

@@ -67,8 +67,8 @@ Prüfen, ob das Backend läuft: http://localhost:8080/actuator/health zeigt `{"s
 ## Tests
 
 ```bash
-cd backend && ./gradlew test                       # 40 Tests, Integrationstests mit Testcontainers (Docker nötig)
-cd frontend && npm run test:unit -- --run          # 35 Tests
+cd backend && ./gradlew test                       # Unit-, Web- und Integrationstests (Testcontainers, Docker nötig)
+cd frontend && npm run test:unit -- --run          # Komponenten-, Router- und API-Tests (Vitest)
 cd frontend && npm run lint-ci                     # Lint wie in CI
 ```
 

@@ -64,8 +64,9 @@ class BudgetServiceTest {
         when(purchaseRepository.existsByOwnerIdAndDateBetween(eq(USER_ID), any(), any())).thenReturn(true);
         when(budgetRepository.save(any())).thenAnswer(call -> call.getArgument(0));
 
-        assertThat(budgetService.set(USER_ID, OCTOBER, new BigDecimal("300.00")).amount())
-                .isEqualByComparingTo("300.00");
+        var response = budgetService.set(USER_ID, OCTOBER, new BigDecimal("300.00"));
+        assertThat(response.amount()).isEqualByComparingTo("300.00");
+        assertThat(response.locked()).isTrue();   // ab jetzt gesperrt, das sagt auch die Antwort (Review 03, m3)
     }
 
     @Test

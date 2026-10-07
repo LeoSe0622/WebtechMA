@@ -125,9 +125,8 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 
 ## E15: Budget nur für den laufenden und den nächsten Monat (Phase 3)
 
-- **Status:** Ergänzt nach Review 02 (M2): Die Sperre betrifft nur das **Ändern** eines vorhandenen Budgets. Ein erstes Budget kann man auch nach einem Einkauf noch anlegen. `locked` ist nur `true`, wenn ein Budget existiert und im Monat eingekauft wurde.
-
 - **Datum:** 07.10.2026
+- **Status:** Ergänzt nach Review 02 (M2): Die Sperre betrifft nur das **Ändern** eines vorhandenen Budgets. Ein erstes Budget kann man auch nach einem Einkauf noch anlegen. `locked` ist nur `true`, wenn ein Budget existiert und im Monat eingekauft wurde.
 - **Entscheidung:** `PUT /api/budgets/{yearMonth}` akzeptiert nur den laufenden und den nächsten Monat, sonst 400. Ein Einkauf ohne Budget ist erlaubt, `remainingBudget` ist dann `null`.
 - **Grund:** Vergangene Monate sind abgeschlossen und zählen für Sparquote und Rangliste. Sie nachträglich zu ändern, würde die Wertung verfälschen. Die Untergrenze 1 € verhindert eine Division durch 0 bei der Sparquote (Review 00, m5).
 - **Verworfene Alternative:** Beliebige Monate. Dann ließe sich die Sparquote im Nachhinein schönrechnen.
@@ -158,7 +157,7 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Datum:** 07.10.2026
 - **Behoben:** B1, M1–M4 (siehe E15, E17 und Tests), m1 (`parseEuro` für „1.000“ und „1.000,50“), m3 (Busy-Zustände), m4 („Alles verbraucht“ statt „Verbraucht“), m5 (E18), m6 (Ersatz-Handler für unerwartete Fehler mit 500 als ProblemDetail, zu lange Bild-URLs werden verworfen), m7 (ungültiges Barcode-Format → 400, kein externer Aufruf innerhalb einer Transaktion), m8 (`StoreService`), m9 (Scanner-Text und Kamera beim schnellen Schließen), m10 (Restbudget des Vormonats vom Backend, „über dem Budget“), m13 (Geldvergleich mit BigDecimal, Alibi-Test entfernt), m14 (Sparquoten der Persona als BigDecimal), m15 (Prompt-Tabelle, `docs/IDEEN.md`).
 - **In Phase 4 erledigt:** m11 (Navigation auf schmalen Bildschirmen).
-- **Zurückgestellt mit Grund:** m2 (Obergrenze im Frontend nur als Hinweistext, maßgeblich ist das Backend mit 409).
+- **Zurückgestellt mit Grund:** m2 (Obergrenze im Frontend nur als Hinweistext, maßgeblich ist das Backend mit 409). m12 und m16 kommen als bekannte Risiken in STATUS.md und als Ideen in IDEEN.md. 401 ohne Body bleibt: Das Frontend reagiert nur auf den Status.
 
 ## E20: Demo-Bereiche in Phase 4 (Rangliste, Musterportfolios)
 
@@ -167,4 +166,17 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
   - Rangliste: gewertet wird der letzte abgeschlossene Monat. Die **Serie** zählt aufeinanderfolgende abgeschlossene Monate bis dahin, in denen ein Budget existiert und die Ausgaben es nicht überschreiten (höchstens 24). Ein Monat ohne Budget oder über Budget unterbricht die Serie. Bei gleicher Sparquote und Serie entscheidet das Pseudonym alphabetisch, damit die Reihenfolge stabil bleibt. Der eingeloggte Nutzer steht nie selbst in der Liste. „Dein Platz wäre“ zählt alle, die strikt besser sind, plus 1. Die Regeln stehen als reine Funktionen in `leaderboard/Ranking.java`.
   - Musterportfolios: `InvestController` liest direkt das Enum `ModelPortfolio`, ohne Service. Es gibt keine Datenbankabfrage und keine Logik, ein Service wäre eine leere Weiterleitung. Der Rechner zu M4 bekommt einen eigenen Service.
 - **Grund:** AUFTRAG.md, Abschnitt 7 nennt die Serie, ohne sie zu definieren (Review 00, m6).
-- **Verworfene Alternative:** Serie auch über Monate ohne Budget fortsetzen. Ohne Budget gibt es aber keine Sparquote, die man vergleichen könnte. m12 und m16 kommen als bekannte Risiken in STATUS.md und als Ideen in IDEEN.md. 401 ohne Body bleibt: Das Frontend reagiert nur auf den Status.
+- **Verworfene Alternative:** Serie auch über Monate ohne Budget fortsetzen. Ohne Budget gibt es aber keine Sparquote, die man vergleichen könnte.
+
+## E21: Umgang mit dem finalen Review 03
+
+- **Datum:** 08.10.2026
+- **Behoben:**
+  - M1: Auf schmalen Bildschirmen (unter 720 px) steht oben nur noch eine schmale Leiste mit Logo und Konto. Die Navigation ist eine untere Tab-Leiste mit den vier echten Bereichen plus „Mehr“ für Demo- und In-Arbeit-Bereiche. Der Button „Einkauf abschließen“ sitzt darüber (`--tabbar-height`). Test: `AppHeader.spec.ts`.
+  - M2: Neue Screenshots `liste-warnung-*.png` (Vorrats-Warnung), `liste-abschliessen-*.png` (ausgefülltes Formular) und `liste-abschliessen-erfolg-*.png` (neues Restbudget).
+  - M3: `SandboxCleanupIntegrationTest` löscht einen abgelaufenen Demo-Nutzer mit eigenem Produkt, Einkauf, Vorrat, Liste und Gewohnheiten und prüft, dass der Katalog bleibt und der nächste Demo-Login funktioniert. Kommt zu M4 eine Tabelle ohne `ON DELETE CASCADE` dazu, schlägt dieser Test an.
+  - m1 (Rangliste auf dem Handy: Haushalt unter dem Namen, Serie sichtbar), m3 (`locked` nach dem ersten Budget), m4 (sichtbarer Hinweis „Kommt mit Milestone M4“ neben deaktivierten Buttons), m5 (Scanner wird erst beim Tippen auf „Kamera“ geladen, Haupt-Bundle 612 kB → 138 kB), m6 (`DataIntegrityViolationException` → 409), m7 (Budget-Monate vom Backend statt von der Browser-Uhr), m8 (Sandbox-Nutzer nur noch in `Ranking.rank` gefiltert, Abfrage `findByLeaderboardOptInTrue`), m9 (Vorrat: Datum auf dem Handy in eigener Zeile), m10 (Doku).
+- **Zurückgestellt mit Grund:**
+  - m1, zweiter Teil (Seed-Nutzer mit gleicher Sparquote, damit die Gleichstandsregel in der Demo sichtbar wird): Die Regel ist im `RankingTest` geprüft. Für die Demo zu M4 einplanen.
+  - m2 (viele Einzelabfragen in der Rangliste, rund 200 pro Aufruf): Bei 15 Seed-Nutzern lokal unter einer Sekunde. Zu M4 mit gruppierten Abfragen ersetzen, bevor echte Nutzer dazukommen. Eingetragen in `docs/IDEEN.md`.
+  - m11 (alle Commits von einem Konto): Das liegt beim Team. Die Empfehlung steht in STATUS.md.

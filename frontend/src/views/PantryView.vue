@@ -131,12 +131,21 @@ async function run(action: () => Promise<void>) {
   font-weight: 600;
 }
 
+/* Schmal: Datum immer in eigener Zeile, damit die Liste ruhig wirkt */
 .date {
+  flex-basis: 100%;
   display: flex;
   align-items: center;
   gap: 6px;
   color: var(--muted);
   font-size: 0.875rem;
+}
+
+/* Breit: Datum in derselben Zeile (steht nach der Grundregel, damit es sie überschreibt) */
+@media (min-width: 720px) {
+  .date {
+    flex-basis: auto;
+  }
 }
 
 .controls {
