@@ -84,6 +84,9 @@ const tasks = computed(() => route.meta.tasks ?? [])
 }
 
 .tasks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 4px 0;
 }
 </style>

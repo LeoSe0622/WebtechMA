@@ -8,7 +8,7 @@ defineProps<{ milestone: string }>()
 <template>
   <p class="banner box">
     <StatusLabel status="demo" />
-    <span>Diese Seite zeigt Beispieldaten. Eigene Eingaben kommen mit Milestone {{ milestone }}.</span>
+    <span>Diese Seite zeigt Beispieldaten. Eigene Eingaben folgen mit Milestone {{ milestone }}</span>
   </p>
 </template>
 

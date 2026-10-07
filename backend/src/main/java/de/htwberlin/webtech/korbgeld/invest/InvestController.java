@@ -18,8 +18,8 @@ import java.util.Map;
 public class InvestController {
 
     private static final Map<String, String> SYMBOL_NAMES = Map.of(
-            "ACWI", "Aktien weltweit (ETF, US-gelistet)",
-            "AGG", "Anleihen (ETF, US-gelistet)");
+            "ACWI", "Aktien weltweit",
+            "AGG", "Anleihen");
 
     public record WeightResponse(String symbol, String name, BigDecimal share) {
     }

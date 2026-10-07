@@ -46,7 +46,8 @@ function percent(share: number): string {
           <h2>{{ portfolio.label }}</h2>
           <ul class="weights">
             <li v-for="weight in portfolio.weights" :key="weight.symbol">
-              <span class="bar" :style="{ width: percent(weight.share) }" aria-hidden="true"></span>
+              <!-- CSS braucht "30%" ohne Leerzeichen; percent() ist für die Anzeige gedacht ("30 %") -->
+              <span class="bar" :style="{ width: `${weight.share * 100}%` }" aria-hidden="true"></span>
               <span class="amount">{{ percent(weight.share) }}</span> {{ weight.name }} ({{ weight.symbol }})
             </li>
           </ul>

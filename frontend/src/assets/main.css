@@ -74,7 +74,8 @@ a {
   cursor: not-allowed;
 }
 
-input,
+/* Text- und Auswahlfelder; Checkboxen und Radios behalten ihre normale Größe */
+input:not([type='checkbox']):not([type='radio']),
 select {
   min-height: 44px;
   padding: 8px 10px;
