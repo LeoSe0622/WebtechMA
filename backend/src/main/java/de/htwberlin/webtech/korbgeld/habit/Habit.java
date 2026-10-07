@@ -1,4 +1,4 @@
-package de.htwberlin.webtech.korbgeld.shopping;
+package de.htwberlin.webtech.korbgeld.habit;
 
 import de.htwberlin.webtech.korbgeld.auth.AppUser;
 import de.htwberlin.webtech.korbgeld.product.Product;
@@ -11,22 +11,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
-public class ListItem {
+public class Habit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Wem der Eintrag gehört; jede Abfrage filtert danach (Datentrennung)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private AppUser owner;
 
-    // LAZY: Produkt erst laden, wenn es gebraucht wird; das Repository holt es per @EntityGraph mit
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -34,22 +32,21 @@ public class ListItem {
     private int quantity;
 
     @Column(nullable = false)
-    private boolean checked;
+    private int intervalDays;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @Column(nullable = false)
+    private LocalDate nextDue;
 
-    protected ListItem() {
+    protected Habit() {
         // für JPA
     }
 
-    // createdAt als Parameter, damit Service (Clock) und Seeder (vergangene Monate) ihn bestimmen
-    public ListItem(AppUser owner, Product product, int quantity, Instant createdAt) {
+    public Habit(AppUser owner, Product product, int quantity, int intervalDays, LocalDate nextDue) {
         this.owner = owner;
         this.product = product;
         this.quantity = quantity;
-        this.checked = false;
-        this.createdAt = createdAt;
+        this.intervalDays = intervalDays;
+        this.nextDue = nextDue;
     }
 
     public Long getId() {
@@ -68,19 +65,11 @@ public class ListItem {
         return quantity;
     }
 
-    public boolean isChecked() {
-        return checked;
+    public int getIntervalDays() {
+        return intervalDays;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void changeQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void changeChecked(boolean checked) {
-        this.checked = checked;
+    public LocalDate getNextDue() {
+        return nextDue;
     }
 }

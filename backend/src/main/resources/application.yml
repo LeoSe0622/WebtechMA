@@ -19,9 +19,24 @@ spring:
       ddl-auto: validate
 
 app:
+  name: Korbgeld
   cors:
     # Welche Frontend-Adressen das Backend aufrufen dürfen (leer = niemand)
     allowed-origins: ${FRONTEND_URL:}
+  jwt:
+    # Mindestens 32 Zeichen, sonst startet die App nicht (JwtConfig)
+    secret: ${JWT_SECRET:}
+    validity-hours: 12
+  budget:
+    # Obergrenze: 500 € pro Person im Haushalt (AUFTRAG.md, Abschnitt 7)
+    max-per-person: 500
+  demo:
+    # Höchstens so viele neue Sandbox-Nutzer pro Tag, darüber 429
+    max-per-day: 100
+    # Sandbox-Nutzer, die älter sind, werden gelöscht
+    retention-days: 7
+  seed:
+    enabled: true
 
 server:
   # Render gibt den Port über PORT vor

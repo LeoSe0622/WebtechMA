@@ -1,0 +1,7 @@
+# Nur für Tests (Gradle setzt das Profil "test")
+app:
+  jwt:
+    # nur für Tests: offensichtliches Dummy-Secret, wird nirgends sonst verwendet
+    secret: nur-fuer-tests-dummy-secret-mindestens-32-zeichen
+  cors:
+    allowed-origins: http://localhost:5173

@@ -1,4 +1,4 @@
-package de.htwberlin.webtech.korbgeld.shopping;
+package de.htwberlin.webtech.korbgeld.pantry;
 
 import de.htwberlin.webtech.korbgeld.auth.AppUser;
 import de.htwberlin.webtech.korbgeld.product.Product;
@@ -12,44 +12,42 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
-public class ListItem {
+public class PantryItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Wem der Eintrag gehört; jede Abfrage filtert danach (Datentrennung)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private AppUser owner;
 
-    // LAZY: Produkt erst laden, wenn es gebraucht wird; das Repository holt es per @EntityGraph mit
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private int quantity;
 
+    // Mindesthaltbarkeit, optional
+    private LocalDate bestBefore;
+
     @Column(nullable = false)
-    private boolean checked;
+    private Instant addedAt;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    protected ListItem() {
+    protected PantryItem() {
         // für JPA
     }
 
-    // createdAt als Parameter, damit Service (Clock) und Seeder (vergangene Monate) ihn bestimmen
-    public ListItem(AppUser owner, Product product, int quantity, Instant createdAt) {
+    public PantryItem(AppUser owner, Product product, int quantity, LocalDate bestBefore, Instant addedAt) {
         this.owner = owner;
         this.product = product;
         this.quantity = quantity;
-        this.checked = false;
-        this.createdAt = createdAt;
+        this.bestBefore = bestBefore;
+        this.addedAt = addedAt;
     }
 
     public Long getId() {
@@ -68,19 +66,23 @@ public class ListItem {
         return quantity;
     }
 
-    public boolean isChecked() {
-        return checked;
+    public LocalDate getBestBefore() {
+        return bestBefore;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Instant getAddedAt() {
+        return addedAt;
+    }
+
+    public void increaseQuantity(int amount) {
+        this.quantity += amount;
     }
 
     public void changeQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public void changeChecked(boolean checked) {
-        this.checked = checked;
+    public void changeBestBefore(LocalDate bestBefore) {
+        this.bestBefore = bestBefore;
     }
 }

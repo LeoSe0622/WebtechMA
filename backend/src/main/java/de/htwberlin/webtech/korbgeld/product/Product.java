@@ -39,7 +39,16 @@ public class Product {
     }
 
     public Product(String name, ProductSource source) {
+        this(name, null, null, null, null, source);
+    }
+
+    public Product(String name, String barcode, String category, String imageUrl, String nutriScore,
+                   ProductSource source) {
         this.name = name;
+        this.barcode = barcode;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.nutriScore = nutriScore;
         this.source = source;
     }
 

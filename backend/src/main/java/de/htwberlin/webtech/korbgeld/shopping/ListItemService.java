@@ -15,8 +15,8 @@ public class ListItemService {
     }
 
     @Transactional(readOnly = true)
-    public List<ListItemResponse> findAll() {
-        return listItemRepository.findAllByOrderByCreatedAtAsc().stream()
+    public List<ListItemResponse> findAll(Long userId) {
+        return listItemRepository.findAllByOwnerIdOrderByCreatedAtAsc(userId).stream()
                 .map(ListItemResponse::from)
                 .toList();
     }
