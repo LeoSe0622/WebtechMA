@@ -18,6 +18,8 @@ Das Team wird nur an zwei Stellen beteiligt, sonst arbeitet Claude selbstständi
    - Danach einen Request gemeinsam verfolgen: Browser-DevTools (Netzwerk), Backend-Log, SQL-Log, Tabelle.
 2. **Jeder Milestone (M1, M2, M3, M4).** Ist ein Milestone erreicht, hält Claude an und führt eine Milestone-Abnahme durch: zeigen, was entstanden ist und wie es zusammenhängt, das Team startet und prüft es selbst, offene Punkte nennen. Erst nach dem „weiter“ des Teams geht es weiter.
 
+**So sieht „beteiligt“ aus (Festlegung des Teams):** Claude schreibt ein `TODO(human)` direkt in die Datei und legt darin genau fest, **was** zu tun ist und **wie** es geht: Ziel, betroffene Datei und Stelle, nötige Klassen und Annotationen bzw. Syntax, Schritt-für-Schritt-Anleitung, erwartetes Ergebnis und wie man es prüft. Im Chat steht dieselbe Anleitung mit Erklärung. Das Team setzt sie um, danach prüft Claude das Ergebnis (Test, Build, echte Datenbank) und gibt Rückmeldung.
+
 Alles andere (Entities, Services, Tests, Migrationen, Layout, CI, Dockerfile, Doku) baut Claude autonom, ohne `TODO(human)`. Es wird gründlich geprüft (Tests, Build, Gegenprobe) und kurz im LOGBUCH erklärt, damit Prompt 3 darauf aufbauen kann. Datenbankzugriffe werden weiterhin mit SQL-Log nachvollziehbar gemacht (`docs/lernen/DATENBANK.md`).
 
 **Offen:** Ob der Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) weiter vom Team selbst geschrieben wird, entscheidet das Team spätestens bei der Abnahme von M2.
