@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: korbgeld
+  config:
+    # Liest die .env aus dem Repo-Wurzelordner; "optional", damit Render ohne Datei startet
+    import: optional:file:../.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      # Neon Free erlaubt wenige Verbindungen und trennt sie beim Einschlafen
+      maximum-pool-size: 5
+      max-lifetime: 300000
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Das Schema gehört Flyway; Hibernate prüft nur, ob die Entities dazu passen
+      ddl-auto: validate
+
+server:
+  # Render gibt den Port über PORT vor
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

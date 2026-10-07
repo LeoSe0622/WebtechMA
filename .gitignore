@@ -3,6 +3,9 @@
 *.env.local
 .env.*.local
 
+# Datenbank-Sicherungen (enthalten echte Daten)
+backup*.sql
+
 # Persönliche Claude-Code-Einstellungen
 .claude/settings.local.json
 

@@ -39,3 +39,10 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Entscheidung:** Beim Aufbau von Backend und Frontend wird das Team in jedem Prompt eingebunden (AUFTRAG.md Regel 15, CLAUDE.md „Einbindung des Teams“). Schwerpunkte: Datenbankanbindung, Datenbankaufrufe, Zusammenspiel von Frontend und Backend. Prompt 2 hält nach jeder Phase für eine Erklärung an.
 - **Grund:** Das Team muss Demo und Papierklausur bestehen und will den Code nicht nur erklärt bekommen, sondern beim Entstehen verstehen.
 - **Verworfene Alternative:** Prompt 2 komplett autonom mit `/goal` und Erklärung erst in Prompt 3. Das ist schneller, aber das Team sieht den Code dann erst, wenn er fertig ist.
+
+## E6: Postgres 17 lokal und in Tests
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** `docker-compose.yml` und `TestcontainersConfiguration` nutzen `postgres:17`, nicht `latest`.
+- **Grund:** Lokal, in Tests und in der Produktion soll dieselbe Hauptversion laufen. Neon unterstützt Postgres 17. Die Seite mit Neons aktueller Standardversion war beim Anlegen wegen einer technischen Störung nicht abrufbar. **Annahme, bei der Neon-Einrichtung zu M3 prüfen:** Neon-Projekt mit Postgres 17 anlegen.
+- **Verworfene Alternative:** `postgres:latest`. Die Version könnte unbemerkt springen, und lokal würde etwas anderes getestet als in der Produktion läuft.
