@@ -1,0 +1,27 @@
+# Geheimnisse: niemals committen
+.env
+*.env.local
+.env.*.local
+
+# Persönliche Claude-Code-Einstellungen
+.claude/settings.local.json
+
+# Backend (Gradle)
+.gradle/
+build/
+out/
+
+# Frontend (Node/Vite)
+node_modules/
+dist/
+coverage/
+
+# IDEs und Betriebssystem
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
