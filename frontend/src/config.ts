@@ -2,7 +2,7 @@
 export const APP_NAME = 'Korbgeld'
 
 // Ziel nach dem Login und für „Zurück zum Dashboard“
-export const HOME_PATH = '/liste'
+export const HOME_PATH = '/dashboard'
 
 // Assignees auf der In-Arbeit-Seite. Tragt eure GitHub-Namen ein (AUFTRAG.md, Abschnitt 0).
 // Ohne Namen erscheint ein Kreis mit der Initiale.

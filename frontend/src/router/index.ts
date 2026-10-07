@@ -2,7 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
 import StartView from '@/views/StartView.vue'
+import DashboardView from '@/views/DashboardView.vue'
+import BudgetView from '@/views/BudgetView.vue'
 import ShoppingListView from '@/views/ShoppingListView.vue'
+import CheckoutView from '@/views/CheckoutView.vue'
+import PantryView from '@/views/PantryView.vue'
 import WorkInProgressView from '@/views/WorkInProgressView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import { HOME_PATH } from '@/config'
@@ -27,10 +31,29 @@ export function createAppRouter() {
     routes: [
       { path: '/', name: 'start', component: StartView, meta: { status: 'ready', public: true } },
       {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: DashboardView,
+        meta: { status: 'ready', navLabel: 'Dashboard', navOrder: 1 },
+      },
+      {
+        path: '/budget',
+        name: 'budget',
+        component: BudgetView,
+        meta: { status: 'ready', navLabel: 'Budget', navOrder: 2 },
+      },
+      {
         path: '/liste',
         name: 'shopping-list',
         component: ShoppingListView,
         meta: { status: 'ready', navLabel: 'Liste', navOrder: 3 },
+      },
+      { path: '/liste/abschliessen', name: 'checkout', component: CheckoutView, meta: { status: 'ready' } },
+      {
+        path: '/vorrat',
+        name: 'pantry',
+        component: PantryView,
+        meta: { status: 'ready', navLabel: 'Vorrat', navOrder: 4 },
       },
       {
         path: '/rezepte',

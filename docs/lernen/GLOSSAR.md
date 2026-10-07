@@ -16,7 +16,9 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **Container**: Abgeschottete Laufzeitumgebung, in der ein Programm (z. B. Postgres) mit allem läuft, was es braucht, ohne es ins Betriebssystem zu installieren.
 - **CORS**: Erlaubnis des Servers per Header (Access-Control-Allow-Origin), dass JavaScript einer anderen Origin seine Antworten lesen darf.
 - **DataSource / Hikari**: Die DataSource liefert Datenbankverbindungen. Hikari ist ein Pool, der einige Verbindungen offen hält und an Anfragen verleiht.
+- **Debounce**: Eine Aktion erst ausführen, wenn eine kurze Pause eingetreten ist, z. B. die Suche erst 250 ms nach dem letzten Tastendruck.
 - **Dependency Injection**: Eine Klasse bekommt die Objekte, die sie braucht, über den Konstruktor von Spring übergeben, statt sie selbst mit new zu erzeugen.
+- **Dirty Checking**: JPA merkt sich geladene Entities und speichert Änderungen an ihnen am Ende der Transaktion automatisch, ohne save().
 - **Docker Compose**: Beschreibt in `docker-compose.yml`, welche Container mit welchen Einstellungen laufen, und startet sie mit einem Befehl.
 - **Docker Engine**: Der Hintergrunddienst, der Container tatsächlich ausführt. Der Befehl `docker` ist nur die Fernbedienung dafür.
 - **Dockerfile (mehrstufig)**: Bauanleitung für ein Container-Image: Stufe 1 baut mit JDK, Stufe 2 enthält nur die Laufzeit (JRE) und das JAR.
@@ -33,10 +35,13 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **JWT**: JSON Web Token: signierter Text mit Angaben (Claims) wie Nutzer-ID und Ablaufzeit. Der Server prüft nur die Signatur und muss sich keine Sitzung merken.
 - **Komponente (Vue)**: Wiederverwendbarer Baustein der Oberfläche in einer .vue-Datei mit Logik (script), HTML-Vorlage (template) und Stil (style).
 - **MockMvc / Mockito**: MockMvc simuliert HTTP-Anfragen im Test ohne echten Server. Mockito ersetzt Abhängigkeiten durch Attrappen mit festen Antworten.
+- **MockRestServiceServer**: Attrappe für einen externen HTTP-Dienst im Test: Sie prüft die ausgehende Anfrage und liefert eine vorbereitete Antwort.
 - **N+1-Problem**: Statt einer Abfrage mit JOIN werden für N Einträge N zusätzliche Einzelabfragen geschickt. Wird mit @EntityGraph vermieden.
 - **Neon**: Anbieter für Postgres in der Cloud mit dauerhaft kostenlosem Tarif, bei uns ab M3 für die Produktionsdatenbank.
 - **ON DELETE CASCADE**: Regel am Fremdschlüssel: Wird der Nutzer gelöscht, löscht die Datenbank alle Zeilen, die auf ihn verweisen, automatisch mit.
 - **onMounted**: Vue-Funktion, die Code ausführt, sobald die Komponente im Browser angezeigt wird. Typisch für das erste Laden von Daten.
+- **Open Food Facts**: Freie Produktdatenbank (ODbL), die zu einem Barcode Name, Bild, Nutri-Score und Kategorien liefert, ohne Konto und Key.
+- **Optimistisches Aktualisieren**: Die Oberfläche zeigt eine Änderung sofort an und nimmt sie zurück, falls das Speichern im Backend scheitert.
 - **Pinia**: Zentrale Ablage für Zustand, den mehrere Komponenten teilen (z. B. das Login-Token ab Phase 2).
 - **Preflight**: Vorab-Anfrage (OPTIONS), mit der der Browser bei z. B. PATCH oder DELETE prüft, ob der Server die eigentliche Anfrage erlaubt.
 - **ProblemDetail**: Standardformat für Fehlerantworten (RFC 9457) mit status, title, detail und eigenen Zusatzfeldern wie path oder errors.
@@ -49,15 +54,18 @@ Ein Satz pro Begriff, alphabetisch sortiert.
 - **ref**: Vue-Funktion für reaktiven Zustand. Ändert sich .value, aktualisiert Vue die Anzeige automatisch.
 - **Render**: Hosting-Dienst, auf dem Backend und Frontend öffentlich laufen (Modulvorgabe).
 - **Repository (Spring Data)**: Interface, zu dem Spring beim Start die Implementierung mit save, findAll usw. erzeugt. Methodennamen werden zu Abfragen.
+- **RestClient**: Spring-Klasse, mit der das Backend selbst HTTP-Anfragen an andere Dienste schickt, z. B. an Open Food Facts.
 - **Review-Befund (Blocker / Major / Minor)**: Blocker muss sofort behoben werden. Major wird behoben oder begründet zurückgestellt. Minor ist eine Verbesserung ohne Dringlichkeit.
 - **Router-Guard**: Funktion, die Vue Router vor jedem Seitenwechsel aufruft, z. B. um ohne Login zur Startseite umzuleiten.
 - **Same-Origin-Policy**: Schutzregel des Browsers: JavaScript darf Antworten nur von derselben Origin (Protokoll, Host, Port) lesen, außer der Server erlaubt es per CORS.
 - **Sandbox-Nutzer**: Nutzer, den der Demo-Login frisch mit Beispieldaten anlegt. Er ist von allen anderen getrennt und wird nach 7 Tagen gelöscht.
 - **Seeder**: Code, der beim Start fehlende Beispieldaten anlegt, idempotent, also ohne Duplikate bei mehrfachem Lauf.
 - **sessionStorage**: Speicher im Browser pro Tab: Er überlebt das Neuladen der Seite, nicht aber das Schließen des Tabs.
+- **Sparquote**: max(0, Restbudget) ÷ Budget eines abgeschlossenen Monats, Grundlage für die Rangliste und den Sparplan.
 - **Staging-Bereich**: Zwischenablage von Git. Nur was dort per `git add` liegt, kommt in den nächsten Commit.
 - **Subagent**: Eigene Claude-Instanz mit leerem Kontext und begrenzten Werkzeugen, die eine Teilaufgabe unabhängig erledigt, bei uns der `prof-kritiker`.
 - **Testcontainers**: Bibliothek, die für Tests automatisch einen echten Datenbank-Container startet und danach wieder entfernt.
+- **@Transactional**: Alle Datenbankschritte einer Methode gelten gemeinsam: Scheitert einer, wird alles zurückgerollt (alles oder nichts).
 - **v-for / :key**: Vue-Anweisung, die ein Element pro Listeneintrag erzeugt. :key gibt jedem Element eine eindeutige Kennung, damit Vue es wiedererkennt.
 - **Vite**: Werkzeug für das Frontend: Entwicklungsserver mit sofortigem Neuladen (npm run dev) und Build für die Produktion (npm run build).
 - **Vitest**: Test-Framework für das Frontend. Läuft mit jsdom, einem simulierten Browser, ohne echten Browser.

@@ -5,7 +5,7 @@ import type { ListItem } from '@/types/listItem'
 defineProps<{ item: ListItem }>()
 
 // Emits: Ereignisse, die diese Komponente nach oben meldet
-const emit = defineEmits<{ toggle: [id: number] }>()
+const emit = defineEmits<{ toggle: [id: number]; remove: [id: number] }>()
 </script>
 
 <template>
@@ -16,6 +16,9 @@ const emit = defineEmits<{ toggle: [id: number] }>()
       <span class="name">{{ item.productName }}</span>
     </label>
     <span class="quantity">{{ item.quantity }}×</span>
+    <button class="remove" type="button" :aria-label="`${item.productName} entfernen`" @click="emit('remove', item.id)">
+      ✕
+    </button>
   </li>
 </template>
 
@@ -23,9 +26,9 @@ const emit = defineEmits<{ toggle: [id: number] }>()
 .row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-  padding: 0 12px;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 4px 0 12px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -38,14 +41,15 @@ label {
   align-items: center;
   gap: 12px;
   flex: 1;
-  min-height: 44px;
+  min-height: 52px;
   cursor: pointer;
 }
 
 input {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--accent);
+  width: 22px;
+  height: 22px;
+  min-height: 0;
+  accent-color: var(--accent-strong);
 }
 
 .done .name {
@@ -56,5 +60,21 @@ input {
 .quantity {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.remove {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.remove:hover {
+  background: var(--bg);
+  color: var(--danger);
 }
 </style>

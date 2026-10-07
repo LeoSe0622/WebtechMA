@@ -115,3 +115,24 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Entscheidung:** `app_user.password_hash` ist nullable. Seed-Nutzer (Rangliste) und Sandbox-Nutzer (Demo) haben keinen Hash und können sich deshalb nicht per Passwort anmelden. Sandbox-Nutzer erreichen ihre Daten nur über das JWT aus `POST /api/auth/demo`. `ON DELETE CASCADE` an allen `owner_id` sorgt dafür, dass das Löschen alter Sandbox-Nutzer alle ihre Daten mitnimmt.
 - **Grund:** AUFTRAG.md, Abschnitt 11 („können sich nicht einloggen“) und Abschnitt 10 (Bereinigung nach 7 Tagen).
 - **Verworfene Alternative:** Zufallspasswort für Seed-Nutzer. Das ist unnötig und wäre ein Geheimnis, das nirgends gebraucht wird.
+
+## E14: Neue Produkte beim Hinzufügen zur Liste (Phase 3)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** `POST /api/list-items` nimmt bevorzugt eine `productId` aus den Vorschlägen. Fehlt sie, wird ein Produkt mit genau gleichem Namen (Groß- und Kleinschreibung egal) genommen, sonst ein neues Produkt mit Quelle `MANUAL` angelegt.
+- **Grund:** AUFTRAG.md sieht „per Eingabe“ vor, nennt aber keinen eigenen Endpunkt zum Anlegen von Produkten. Der Abgleich bleibt über die productId. Nur bei exakt gleichem Namen wird kein Duplikat erzeugt, ähnliche Namen werden nicht zusammengelegt.
+- **Verworfene Alternative:** Eigener Endpunkt `POST /api/products`. Das wäre ein zweiter Aufruf aus der Oberfläche für denselben Klick.
+
+## E15: Budget nur für den laufenden und den nächsten Monat (Phase 3)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** `PUT /api/budgets/{yearMonth}` akzeptiert nur den laufenden und den nächsten Monat, sonst 400. Ein Einkauf ohne Budget ist erlaubt, `remainingBudget` ist dann `null`.
+- **Grund:** Vergangene Monate sind abgeschlossen und zählen für Sparquote und Rangliste. Sie nachträglich zu ändern, würde die Wertung verfälschen. Die Untergrenze 1 € verhindert eine Division durch 0 bei der Sparquote (Review 00, m5).
+- **Verworfene Alternative:** Beliebige Monate. Dann ließe sich die Sparquote im Nachhinein schönrechnen.
+
+## E16: Jackson 3 und primitive Felder in Request-DTOs (Phase 3)
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Optionale Wahrheitswerte in Requests sind `Boolean` (nicht `boolean`), fehlend gilt als `false`.
+- **Grund:** Spring Boot 4 nutzt Jackson 3. Dort schlägt das Einlesen fehl, wenn ein primitives Feld im JSON fehlt (`FAIL_ON_NULL_FOR_PRIMITIVES`), und die Anfrage endet mit 400. Aufgefallen durch den Integrationstest der Kern-Kette.
+- **Verworfene Alternative:** Die Jackson-Einstellung global abschalten. Das würde echte Fehler bei Pflichtfeldern verstecken.

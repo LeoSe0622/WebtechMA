@@ -125,3 +125,23 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - Design: Tokens plus `--accent-strong` (E11), Source Serif 4 über Google Fonts, Buttons und Felder mit 44 px, `prefers-reduced-motion`.
   - Tests: 20, u. a. Token im Header, 401 meldet ab, Barcode-404 ohne Weiterleitung, `loadPage` bei 404/501, wip-Route, unbekannter Pfad, Login-Schutz, Demo-Login.
 - **Konzepte:** JWT (Header, Claims, Signatur), zustandslose Authentifizierung, BCrypt, `@AuthenticationPrincipal`, Resource Server, ProblemDetail (RFC 9457), `@RestControllerAdvice`, `ON DELETE CASCADE`, `@ElementCollection`/`@Embeddable`, `@EmbeddedId`, `AttributeConverter`, `ApplicationRunner`, `@Scheduled`, injizierte `Clock`, mehrstufiges Dockerfile, Pinia-Store, sessionStorage, Router-Guard, Route-Meta.
+
+## Phase 3: Kern-Kette (07.10.2026, Prompt 2)
+
+- **Backend:**
+  - UC1 Budget: `budget/BudgetController.java` (`GET /api/budgets/current/summary`, `GET` und `PUT /api/budgets/{yearMonth}`), `budget/BudgetService.java` (Obergrenze 500 € × Haushalt → 409, Sperre ab dem ersten Einkauf → 409, nur laufender und nächster Monat → 400), `budget/BudgetMath.java` (Restbudget, Sparquote als reine Funktionen).
+  - UC2 Liste: `shopping/ListItemService.java` (`POST` mit Vorrats-Warnung `alreadyInPantry`, erst mit `force` angelegt; `PATCH` abhaken/Menge; `DELETE`), Produkte über `product/ProductController.java` (`GET /api/products?query=`, `GET /api/products/barcode/{code}`), `product/OpenFoodFactsClient.java` mit `RestClient`, eigenem User-Agent, 3 s Timeout (`OpenFoodFactsConfig`), Cache in der eigenen Tabelle, unbekannt → 404, Ausfall → 502.
+  - UC4 Einkauf: `shopping/PurchaseService.complete` in **einer** `@Transactional`-Methode: Einkauf mit Positionen anlegen, Vorrat erhöhen (gleiche Produkte zusammengefasst), abgehakte Einträge löschen, neues Restbudget zurückgeben. `shopping/StoreController.java` (`GET`/`POST /api/stores`).
+  - UC5 Vorrat: `pantry/PantryService.java` (sortiert nach Mindesthaltbarkeit, Status `EXPIRED`/`EXPIRING_SOON` ≤ 3 Tage/`OK`/`NO_DATE`, `PATCH`, `consume` löscht bei 0 → 204).
+  - Tests jetzt 29: `BudgetServiceTest` (Sperre, Obergrenze, Monatsgrenzen, Restbudget negativ, Sparquote nie negativ), `PurchaseServiceTest` (kein Abgehakter → 400, Zusammenfassen im Vorrat, Löschen), `PantryServiceTest` (3-Tage-Regel), `OpenFoodFactsClientTest` mit `MockRestServiceServer` (Erfolg, 404, Timeout), `ListItemControllerTest` (ungültige Menge → 400 mit Feldfehler), `CoreChainIntegrationTest` (ganze Kette, Vorrats-Warnung, Datentrennung: B kann A's Eintrag weder sehen noch ändern noch löschen).
+- **Frontend:**
+  - API-Module `src/api/budget.ts`, `products.ts`, `listItems.ts`, `purchases.ts`, `pantry.ts`, alle über `apiRequest`.
+  - `DashboardView` (Kassenbon-Streifen, Ausgaben, Sparquote des Vormonats, Ablauf-Warnungen), `BudgetView` (laufender und nächster Monat, Sperre sichtbar), `ShoppingListView` (Vorschläge beim Tippen, Barcode-Eingabe und Kamera über `@zxing/browser`, Vorrats-Warnung mit „Trotzdem hinzufügen“, Abhaken speichert per PATCH, fixierter Button „Einkauf abschließen“), `CheckoutView` (`/liste/abschliessen`: Laden wählen oder neu, Summe vom Kassenbon, neues Restbudget), `PantryView` (Menge ±, Datum, „Verbraucht“).
+  - Komponenten: `ReceiptStrip` (das Erkennungsmerkmal mit gezackter Unterkante per CSS-Maske), `ExpiryLabel`, `BarcodeScanner`.
+  - Tests jetzt 24: Liste (v-for, Abhaken per PATCH, Vorrats-Warnung, Fehler), Restbudget positiv/negativ/ohne Budget, Ablauf-Labels und Verbrauchen im Vorrat.
+- **Echter Durchlauf** (curl gegen Port 8081 mit lokaler Datenbank, V3 und V4 dort zum ersten Mal migriert): Demo-Login 201, Liste → abhaken → Einkauf 12,34 € → Artikel im Vorrat, Restbudget 203,75 → 191,41 (genau −12,34), `/api/recipes` 501 und `/api/gibt-es-nicht` 404 als ProblemDetail, Preflight `PUT` mit `Authorization` erlaubt.
+- **Konzepte:** `@Transactional` als Alles-oder-nichts, Dirty Checking (Änderungen an geladenen Entities speichert JPA beim Commit ohne `save`), Datentrennung über `findByIdAndOwnerId` (fremd = 404), `RestClient`, `MockRestServiceServer`, Mockito-Unit-Tests ohne Spring, `@Valid` mit eigenen Meldungen, `watch` mit Verzögerung (Debounce), optimistisches Aktualisieren mit Zurücknehmen, `Intl.NumberFormat`, CSS-Maske.
+- **Lektionen:**
+  - Jackson 3 (Spring Boot 4) lehnt fehlende primitive Felder ab → `Boolean` statt `boolean` in Requests (E16).
+  - `RestClient` kodiert Kommas in URI-Variablen als `%2C`. Feste Teile der URL gehören direkt in den Pfad.
+  - `Intl.NumberFormat` trennt Betrag und € durch ein geschütztes Leerzeichen.
