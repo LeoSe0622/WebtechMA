@@ -1,0 +1,34 @@
+/* Design-Tokens aus AUFTRAG.md, Abschnitt 15 (vollständiges Layout folgt in Phase 2) */
+:root {
+  --bg: #faf9f5;
+  --surface: #ffffff;
+  --border: #e5e1d8;
+  --text: #1f1e1d;
+  --muted: #6b6862;
+  --accent: #c96442;
+  --accent-weak: #f3e3da;
+  --ok: #1a7f37;
+  --warn: #9a6700;
+  --danger: #cf222e;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

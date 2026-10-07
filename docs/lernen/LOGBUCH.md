@@ -50,3 +50,27 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - `gradlew` braucht unter Git das Ausführungsrecht (`100755`), sonst scheitert Linux-CI.
 - **Stand M1 erreicht.**
 - **Arbeitsweise ab hier (E7):** Das Team ist nur noch an der Verbindung von Frontend und Backend und an den Milestone-Abnahmen beteiligt. Den Rest baut Claude autonom (AUFTRAG.md v1.4, Regel 15).
+
+## M1-Abnahme (07.10.2026)
+
+- Das Team hat M1 abgenommen: `GET /api/list-items` liefert Einträge aus Postgres, die Tests sind grün.
+- Festlegung des Teams: „Beteiligt sein“ heißt, Claude schreibt ein genaues `TODO(human)` (was und wie), das Team setzt es um, Claude prüft.
+
+## Etappe 5: Vue-Frontend, Stand M2 (07.10.2026, autonom gebaut)
+
+- **Entstanden:**
+  - `frontend/` mit create-vue 3.24.0 (`--ts --router --pinia --vitest --eslint --bare`): Vue 3.5, Vite 8, Vitest 4, TypeScript 6, Vue Router, Pinia, ESLint + oxlint.
+  - `frontend/vite.config.ts`: `envDir: '..'`, damit Vite die gemeinsame `.env` liest (nur `VITE_…`).
+  - `frontend/package.json`: Name `korbgeld-frontend`, `engines.node` `^26.0.0`. `frontend/.node-version`: `26` (Render nimmt sonst eine andere Node-Version).
+  - `src/main.ts`: erzeugt die App, hängt Pinia und Router an, bindet `assets/main.css` ein, mountet auf `#app`.
+  - `src/App.vue`: Kopfleiste mit `APP_NAME` und `RouterLink`, darunter `RouterView`.
+  - `src/config.ts`: `APP_NAME`, die einzige Stelle für den Namen im Frontend.
+  - `src/router/index.ts`: History-Modus, `/` → `/liste`, `/liste` → `ShoppingListView`.
+  - `src/types/listItem.ts`: TypeScript-Interface mit denselben Feldern wie das Backend-DTO.
+  - `src/views/ShoppingListView.vue`: festes Array in `ref`, `computed` für „X von Y noch offen“, `v-for` mit `:key`, `v-if`/`v-else` für die leere Liste, Funktion `toggle`.
+  - `src/components/ListItemRow.vue`: eine Zeile, bekommt `item` als Prop, meldet `toggle` per Emit. Tippfläche mindestens 44 px.
+  - `src/assets/main.css`: Design-Tokens aus AUFTRAG.md, Abschnitt 15, Fokusrahmen.
+  - Tests (6, alle grün, Gegenprobe gemacht): `ListItemRow.spec.ts` (Anzeige, Emit, Klasse `done`), `ShoppingListView.spec.ts` (`v-for` rendert 3 Zeilen, Zähler reagiert aufs Abhaken), `App.spec.ts` (Router-Weiterleitung).
+- **Konzepte:** Single-File-Component (`<script setup>`, `<template>`, `<style scoped>`), Reaktivität mit `ref` und `computed`, Template-Syntax (`{{ }}`, `:attr`, `@event`, `v-for`/`:key`, `v-if`/`v-else`), Props und Emits (Daten nach unten, Ereignisse nach oben), Vue Router (`RouterView`, `RouterLink`, History-Modus), Pinia (zentrale Ablage, wird ab Phase 2 genutzt), Vite-Entwicklungsserver, Vitest mit `@vue/test-utils` (`mount`, `find`, `trigger`, `emitted`) in jsdom.
+- **Geprüft:** `npm run test:unit -- --run` (6/6), `npm run lint` (ohne Befund), `npm run build` (inkl. `vue-tsc`), Dev-Server liefert `/liste` aus.
+- **Stand M2 erreicht** (Listenansicht per `v-for`). Noch mit festen Daten, die Anbindung ans Backend folgt mit dem Team.
