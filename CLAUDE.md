@@ -8,7 +8,17 @@ Semesterprojekt „Korbgeld“ im Modul Web-Technologien (HTW Berlin). Das volls
 - Das Team muss jede Zeile erklären können. Lesbarer, konventioneller Code statt cleverer Abstraktion.
 - Prompt 1 (Lernen) ist interaktiv: Konzepte erklären, bevor sie benutzt werden.
 - In Prompt 1 und beim Team-Ausbau zu M4 (AUFTRAG.md, Abschnitt 18) schreibt das Team Spring- und Vue-Code selbst (`TODO(human)`). Doku, Konfiguration und Git-Commits übernimmt Claude und erklärt sie kurz.
-- Prompt 2 baut die Phasen 2 bis 5 autonom und ohne `TODO(human)`, aber nur im verkleinerten Umfang aus AUFTRAG.md v1.2. Die Teile aus Abschnitt 18 baut er nicht.
+- Prompt 2 baut die Phasen 2 bis 5 ohne `TODO(human)`, aber nur im verkleinerten Umfang aus AUFTRAG.md. Die Teile aus Abschnitt 18 baut er nicht.
+
+## Einbindung des Teams (Wunsch des Teams, E5)
+
+Das Team will verstehen, **wie die Datenbankanbindung und die Datenbankaufrufe funktionieren** und **wie Backend und Frontend arbeiten und zusammenspielen**. Beim Aufbau von Backend und Frontend wird es in den Entwicklungsprozess eingebunden. Das gilt in jedem Prompt:
+
+1. **Vor dem Bauen:** kurz sagen, was als Nächstes entsteht und wie es sich in den Weg Browser → Vue → HTTP → Controller → Service → Repository → JPA/Hibernate → SQL → Postgres einfügt.
+2. **Beim Bauen:** Die tragenden Stellen schreibt das Team selbst (`TODO(human)`), z. B. Entity-Felder, Repository-Methoden, Migration, Controller-Endpunkt, Vue-Template, API-Aufruf.
+3. **Datenbank sichtbar machen:** Bei jedem neuen Datenbankzugriff zeigen, welches SQL Hibernate erzeugt (Log `org.hibernate.SQL` im Dev-Profil), wie die Verbindung entsteht (`.env` → `application.yml` → DataSource/Hikari → JDBC → Postgres) und wie man das Ergebnis per `psql` in der Datenbank nachprüft.
+4. **Nach dem Bauen:** einen Request gemeinsam von Anfang bis Ende verfolgen (Browser-DevTools/Netzwerk, curl, Backend-Log, SQL-Log, Tabelle) und das Ergebnis in `docs/lernen/LOGBUCH.md` festhalten.
+5. **Prompt 2:** Nach jeder Phase (2, 3, 4, 5) anhalten, die neuen Teile mit Schritt 3 und 4 erklären und erst nach dem „weiter“ des Teams die nächste Phase beginnen.
 
 ## Arbeitsregeln (Kurzform von AUFTRAG.md, Abschnitt 2)
 
@@ -26,6 +36,7 @@ Semesterprojekt „Korbgeld“ im Modul Web-Technologien (HTW Berlin). Das volls
 12. Nach Phase 0, Phase 1, Phase 3 und am Ende prüft der Subagent `prof-kritiker`. Berichte kommen nach `docs/reviews/`.
 13. **Kostenregel:** nur dauerhaft kostenlose Dienste, ohne Testphase und ohne Kreditkarte (AUFTRAG.md, Abschnitt 3).
 14. Nach jeder Phase oder Etappe `docs/lernen/LOGBUCH.md` und `docs/lernen/GLOSSAR.md` ergänzen.
+15. Team einbinden (siehe nächster Abschnitt).
 
 ## Datenbank
 
@@ -57,3 +68,6 @@ Sie funktionieren, sobald die jeweiligen Teile angelegt sind.
 | Frontend starten | `cd frontend; npm run dev` |
 | Frontend testen | `cd frontend; npm run test:unit -- --run` |
 | Frontend linten | `cd frontend; npm run lint` |
+
+## Wichtig!
+Bevor du irgendetwas committest oder als erledigt oder fertig anerkennst, überprüfe genau, ob es wirklich stimmt und alles korrekt ist!

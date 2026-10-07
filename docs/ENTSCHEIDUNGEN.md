@@ -32,3 +32,10 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
 - **Datum:** 07.10.2026
 - **Übernommen in AUFTRAG.md v1.2:** B1 (nur Docker lokal), M2 (Registrierungsfelder), M3 (Seeder füllt bei jedem Start auf), M4 und m12 (Sandbox-Bereinigung, Tageslimit 429).
 - **Zurückgestellt:** M6 (Zielbedingung im Repo). Sie steht in `goal-befehl.txt`, die vor Prompt 2 bereitliegen muss. Die Minor-Befunde m2–m11 hat das Team nicht übernommen. Prompt 2 darf dazu begründete Annahmen treffen und sie hier festhalten.
+
+## E5: Team wird in die Entwicklung eingebunden
+
+- **Datum:** 07.10.2026
+- **Entscheidung:** Beim Aufbau von Backend und Frontend wird das Team in jedem Prompt eingebunden (AUFTRAG.md Regel 15, CLAUDE.md „Einbindung des Teams“). Schwerpunkte: Datenbankanbindung, Datenbankaufrufe, Zusammenspiel von Frontend und Backend. Prompt 2 hält nach jeder Phase für eine Erklärung an.
+- **Grund:** Das Team muss Demo und Papierklausur bestehen und will den Code nicht nur erklärt bekommen, sondern beim Entstehen verstehen.
+- **Verworfene Alternative:** Prompt 2 komplett autonom mit `/goal` und Erklärung erst in Prompt 3. Das ist schneller, aber das Team sieht den Code dann erst, wenn er fertig ist.

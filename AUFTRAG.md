@@ -1,13 +1,13 @@
 # Auftrag: Machbarkeitsbeweis „Korbgeld“
 
-Version 1.2 · 07.10.2026
+Version 1.3 · 07.10.2026
 
 Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prompts umgesetzt:
 
 | Prompt | Datei | Modus | Inhalt |
 |---|---|---|---|
 | 1 Lernen und Vorbereiten | `PROMPT-1-LERNEN.md` | interaktiv, Output-Stil „Learning“ | Phase 0 und 1 gemeinsam mit dem Team, alles erklärt |
-| 2 Bauen | `goal-befehl.txt` | autonom mit `/goal`, Output-Stil „Explanatory“ | Phase 2 bis 5 |
+| 2 Bauen | `goal-befehl.txt` | autonom innerhalb einer Phase, Halt mit Erklärung nach jeder Phase (Regel 15), Output-Stil „Explanatory“ | Phase 2 bis 5 |
 | 3 Verstehen | `PROMPT-3-VERSTEHEN.md` | interaktiv, Output-Stil „Learning“ | Code-Tour, Prüfungsfragen, Spickzettel |
 
 **Änderungen gegenüber v1.0:** Ablauf in drei Prompts. Neue Kostenregel (Abschnitt 3). Datenbank bei Neon statt bei Render, weil die kostenlose Render-Datenbank nach 30 Tagen gelöscht wird. Kein `render.yaml`-Blueprint mehr, sondern eine manuelle Anleitung `docs/DEPLOY.md`. Lokale Entwicklung geht auch ohne Docker über einen Neon-Branch. Spring Security kommt erst in Phase 2. Neuer Lernordner `docs/lernen/`.
@@ -18,6 +18,8 @@ Dieses Dokument beschreibt das Gesamtziel für Claude Code. Es wird in drei Prom
 - Registrierung mit Haushaltsgröße, Pseudonym und Ranglisten-Opt-in (M2).
 - Der Seeder füllt bei jedem Start bis zum letzten abgeschlossenen Monat auf (M3).
 - Sandbox-Bereinigung auch beim Start und beim Demo-Login, dazu ein Tageslimit für Demo-Logins (M4, m12).
+
+**Änderungen gegenüber v1.2** (Entscheidung E5): Das Team wird beim Aufbau von Backend und Frontend eingebunden und soll Datenbankanbindung, Datenbankaufrufe und das Zusammenspiel von Frontend und Backend verstehen. Neue Arbeitsregel 15. Prompt 2 hält nach jeder Phase an.
 
 ## 0. Platzhalter
 
@@ -59,6 +61,7 @@ Pflichtvorgaben des Moduls: Spring Boot, Vue.js, Postgres, Deployment auf Render
 12. Rufe den Subagenten `prof-kritiker` (Anhang A) nach Phase 0, nach Phase 1, nach Phase 3 und am Ende auf. Blocker behebst du sofort. Major-Befunde behebst du oder stellst sie begründet in `docs/ENTSCHEIDUNGEN.md` zurück.
 13. Die Kostenregel (Abschnitt 3) ist nicht verhandelbar.
 14. Halte nach jeder Phase in `docs/lernen/LOGBUCH.md` fest, was entstanden ist und welche Konzepte darin vorkommen (mit Dateipfaden). Neue Fachbegriffe kommen mit einem Satz Erklärung in `docs/lernen/GLOSSAR.md`. Prompt 3 baut darauf auf.
+15. **Team einbinden.** Das Team will verstehen, wie Datenbankanbindung und Datenbankaufrufe funktionieren und wie Backend und Frontend zusammenspielen. Deshalb gilt in jedem Prompt: vor dem Bauen den Platz im Request-Weg erklären, tragende Stellen vom Team schreiben lassen (`TODO(human)`), bei Datenbankzugriffen das erzeugte SQL und die Verbindungskette (`.env` → `application.yml` → Hikari → JDBC → Postgres) zeigen und nach dem Bauen einen Request von Anfang bis Ende gemeinsam verfolgen. In Prompt 2 endet jede Phase mit dieser Erklärung, und die nächste Phase beginnt erst nach dem „weiter“ des Teams. Das geht vor Regel 5: Zwischen den Phasen darf und soll Prompt 2 Fragen stellen.
 
 ## 3. Kostenregel
 
