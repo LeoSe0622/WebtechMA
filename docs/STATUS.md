@@ -47,6 +47,8 @@ Alle Annahmen stehen mit Begründung in `docs/ENTSCHEIDUNGEN.md` (E1–E20). Die
 - **Kostenlose Render-Dienste schlafen** nach 15 Minuten ein. Der erste Aufruf dauert dann bis zu einer Minute.
 - **Open Food Facts** kennt nicht jeden Barcode. Unbekannte Barcodes ergeben 404, dann bietet die Oberfläche die manuelle Eingabe an.
 
+**Abnahme:** Das Team hat den Stand nach Prompt 2 am 08.10.2026 lokal geprüft und abgenommen.
+
 ## Nächste Schritte entlang der Milestones
 
 | Milestone | Datum | Inhalt |

@@ -174,3 +174,9 @@ Was in welcher Etappe entstanden ist und welche Konzepte darin vorkommen. Prompt
   - Ein Screenshot ohne JavaScript-Fehler heißt nicht, dass die Seite gut aussieht. Bilder ansehen.
   - Ein Prozess, der „gestoppt“ ist, kann auf IPv6 weiterlaufen. Den Port prüfen, nicht die Meldung.
   - Eine Korrektur kann ein Problem verschieben statt lösen (umbrechende Navigation statt versteckter).
+
+## Abnahme von Prompt 2 (08.10.2026)
+
+- Das Team hat den Stand nach Prompt 2 lokal gestartet und abgenommen („läuft, abgenommen“).
+- Stolperstelle beim Start: `npm.cmd run dev.` mit Punkt am Ende ergibt „Missing script“. Der Befehl heißt `npm.cmd run dev`.
+- `npm ci` meldet 4 „high“-Lücken. Sie stammen alle aus derselben Lücke in `braces`, die nur über ESLint (Entwicklungswerkzeug) geladen wird. Die ausgelieferte App ist nicht betroffen (`npm audit --omit=dev`: 0). Kein `npm audit fix --force` (E22).

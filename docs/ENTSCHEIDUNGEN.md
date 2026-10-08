@@ -180,3 +180,10 @@ Format: Datum, Entscheidung, Grund, verworfene Alternative.
   - m1, zweiter Teil (Seed-Nutzer mit gleicher Sparquote, damit die Gleichstandsregel in der Demo sichtbar wird): Die Regel ist im `RankingTest` geprüft. Für die Demo zu M4 einplanen.
   - m2 (viele Einzelabfragen in der Rangliste, rund 200 pro Aufruf): Bei 15 Seed-Nutzern lokal unter einer Sekunde. Zu M4 mit gruppierten Abfragen ersetzen, bevor echte Nutzer dazukommen. Eingetragen in `docs/IDEEN.md`.
   - m11 (alle Commits von einem Konto): Das liegt beim Team. Die Empfehlung steht in STATUS.md.
+
+## E22: npm-audit-Meldungen in Entwicklungswerkzeugen
+
+- **Datum:** 08.10.2026
+- **Entscheidung:** Die 4 „high“-Meldungen von `npm audit` werden nicht mit `npm audit fix --force` behoben. Alle vier gehen auf eine Lücke in `braces` zurück (GHSA-vfj7-8cjw-p6xm), die nur über `@vue/eslint-config-typescript` → `fast-glob` → `micromatch` geladen wird. Bei einem Update der ESLint-Konfiguration erneut prüfen.
+- **Grund:** Nur ein Entwicklungswerkzeug ist betroffen. `npm audit --omit=dev` meldet 0 Lücken in dem, was ausgeliefert wird. Ausnutzbar wäre die Lücke nur mit bösartigen Suchmustern, die im Projekt nicht vorkommen. `--force` erlaubt Versionssprünge, die Lint oder Build brechen können.
+- **Verworfene Alternative:** `npm audit fix --force`.
