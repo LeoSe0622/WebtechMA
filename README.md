@@ -64,6 +64,8 @@ Dann http://localhost:5173 öffnen und **„Als Demo testen“** klicken. Die De
 
 Prüfen, ob das Backend läuft: http://localhost:8080/actuator/health zeigt `{"status":"UP"}`.
 
+**`bootRun` bricht mit „non-zero exit value 1“ ab?** Meist läuft die Datenbank nicht, z. B. nach einem Neustart des Rechners. Docker Desktop öffnen und `docker compose up -d` im Wurzelordner ausführen. Die eigentliche Ursache steht im Terminal weiter oben beim untersten `Caused by:`. Weitere mögliche Ursachen: Port 8080 ist schon belegt (ein zweites Backend läuft noch) oder `JWT_SECRET` in der `.env` hat weniger als 32 Zeichen.
+
 ## Tests
 
 ```bash
